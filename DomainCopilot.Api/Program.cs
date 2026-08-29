@@ -4,6 +4,7 @@ using DomainCopilot.Application.UseCases;
 using DomainCopilot.Infrastructure.Embeddings;
 using DomainCopilot.Infrastructure.Llm;
 using DomainCopilot.Infrastructure.Persistence;
+using DomainCopilot.Infrastructure.Repositories;
 using DomainCopilot.Infrastructure.Tenancy;
 using DomainCopilot.Infrastructure.VectorStore;
 using Microsoft.EntityFrameworkCore;
@@ -25,9 +26,11 @@ namespace DomainCopilot.Api
 
             builder.Services.AddScoped<ILlmClient, FakeLlmClient>();
             builder.Services.AddScoped<IVectorStore, FakeVectorStore>();
-            builder.Services.AddScoped<IEmbeddingService, FakeEmbeddingService>();
+            //builder.Services.AddScoped<IEmbeddingService, FakeEmbeddingService>();
+            builder.Services.AddHttpClient<IEmbeddingService, GeminiEmbeddingService>();
             builder.Services.AddScoped<AskQuestionUseCase>();
             builder.Services.AddScoped<ITenantProvider, StaticTenantProvider>();
+            builder.Services.AddScoped<IDocumentChunkRepository, EfDocumentChunkRepository>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
              options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
