@@ -2,7 +2,7 @@
 
 namespace DomainCopilot.Domain.Entities
 {
-    internal class Tenant
+    public class Tenant
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }

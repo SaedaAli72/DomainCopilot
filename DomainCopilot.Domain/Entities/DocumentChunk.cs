@@ -2,7 +2,7 @@
 
 namespace DomainCopilot.Domain.Entities
 {
-    internal class DocumentChunk
+    public class DocumentChunk
     {
         public Guid Id { get; private set; }
         public Guid DocumentId { get; private set; }

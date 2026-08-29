@@ -3,7 +3,7 @@ using DomainCopilot.Domain.Enum;
 
 namespace DomainCopilot.Domain.Entities
 {
-    internal class CitizenRequest
+    public class CitizenRequest
     {
         public Guid Id { get; private set; }
         public Guid TenantId { get; private set; }

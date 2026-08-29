@@ -1,6 +1,6 @@
 ﻿namespace DomainCopilot.Domain.Enum
 {
-    internal enum RequestStatus
+    public enum RequestStatus
     {
         PendingReview,
         Eligible,

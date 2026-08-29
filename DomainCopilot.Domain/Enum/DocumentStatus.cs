@@ -2,7 +2,7 @@
 
 namespace DomainCopilot.Domain.Enum
 {
-    internal enum DocumentStatus
+    public enum DocumentStatus
     {
         Uploaded,
         Processing,
