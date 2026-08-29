@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainCopilot.Infrastructur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainCopilot.Api", "DomainCopilot.Api\DomainCopilot.Api.csproj", "{956D55CE-0F21-4E40-828A-2ECC85A7FAC2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainCopilot.Tests", "DomainCopilot.Tests\DomainCopilot.Tests.csproj", "{1309ECCC-2143-4416-9062-01C355124054}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{956D55CE-0F21-4E40-828A-2ECC85A7FAC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{956D55CE-0F21-4E40-828A-2ECC85A7FAC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{956D55CE-0F21-4E40-828A-2ECC85A7FAC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1309ECCC-2143-4416-9062-01C355124054}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1309ECCC-2143-4416-9062-01C355124054}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1309ECCC-2143-4416-9062-01C355124054}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1309ECCC-2143-4416-9062-01C355124054}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
