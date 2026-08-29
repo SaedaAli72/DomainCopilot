@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace DomainCopilot.Application.Interfaces
 {
     internal interface ILlmClient
     {
+        Task<string> CompleteAsync(string prompt, CancellationToken cancellationToken = default);
+
     }
 }
