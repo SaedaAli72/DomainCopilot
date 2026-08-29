@@ -7,6 +7,7 @@ namespace DomainCopilot.Domain.Entities
     {
         public Guid Id { get; private set; }
         public Guid TenantId { get; private set; }
+        public Tenant? Tenant { get; private set; }
         public string CitizenName { get; private set; }
         public string ServiceType { get; private set; }
         public RequestStatus Status { get; private set; }
