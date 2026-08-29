@@ -10,4 +10,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DomainCopilot.Application\DomainCopilot.Application.csproj" />
+    <ProjectReference Include="..\DomainCopilot.Infrastructure\DomainCopilot.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
