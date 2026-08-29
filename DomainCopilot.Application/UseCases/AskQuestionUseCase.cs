@@ -4,7 +4,7 @@ using DomainCopilot.Application.Interfaces;
 
 namespace DomainCopilot.Application.UseCases
 {
-    internal class AskQuestionUseCase
+    public class AskQuestionUseCase
     {
         private readonly IEmbeddingService _embeddingService;
         private readonly IVectorStore _vectorStore;

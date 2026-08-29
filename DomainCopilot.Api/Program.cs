@@ -1,4 +1,10 @@
 
+using DomainCopilot.Application.Interfaces;
+using DomainCopilot.Application.UseCases;
+using DomainCopilot.Infrastructure.Embeddings;
+using DomainCopilot.Infrastructure.Llm;
+using DomainCopilot.Infrastructure.VectorStore;
+
 namespace DomainCopilot.Api
 {
     public class Program
@@ -13,6 +19,11 @@ namespace DomainCopilot.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<ILlmClient, FakeLlmClient>();
+            builder.Services.AddScoped<IVectorStore, FakeVectorStore>();
+            builder.Services.AddScoped<IEmbeddingService, FakeEmbeddingService>();
+            builder.Services.AddScoped<AskQuestionUseCase>();
 
             var app = builder.Build();
 

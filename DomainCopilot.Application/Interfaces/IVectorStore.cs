@@ -2,7 +2,7 @@
 
 namespace DomainCopilot.Application.Interfaces
 {
-    internal interface IVectorStore
+    public interface IVectorStore
     {
         // Stores the embedding of a chunk in the vector database, scoped to a specific tenant
         Task IndexAsync(Guid chunkId, float[] embedding, Guid tenantId, CancellationToken cancellationToken = default);
