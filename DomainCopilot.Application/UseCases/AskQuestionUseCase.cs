@@ -31,7 +31,7 @@ namespace DomainCopilot.Application.UseCases
 
             // Step 4: ask the LLM using retrieved context only
             var context = string.Join("\n", chunks.Select(c => c.Content));
-            var prompt = $"Question: {question}\n(context chunks will be injected here)";
+            var prompt = $"Answer the question using ONLY the information in the context below. Be direct and specific, quoting exact numbers or facts when available.\n\nContext:\n{context}\n\nQuestion: {question}";
             var answer = await _llmClient.CompleteAsync(prompt, cancellationToken);
 
             return answer;

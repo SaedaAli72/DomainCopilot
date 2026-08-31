@@ -26,7 +26,8 @@ namespace DomainCopilot.Api
 
             //builder.Services.AddScoped<ILlmClient, FakeLlmClient>();
             builder.Services.AddHttpClient<ILlmClient, GeminiLlmClient>();
-            builder.Services.AddScoped<IVectorStore, FakeVectorStore>();
+            //builder.Services.AddScoped<IVectorStore, FakeVectorStore>();
+            builder.Services.AddScoped<IVectorStore, SqlVectorStore>();
             //builder.Services.AddScoped<IEmbeddingService, FakeEmbeddingService>();
             builder.Services.AddHttpClient<IEmbeddingService, GeminiEmbeddingService>();
             builder.Services.AddScoped<AskQuestionUseCase>();

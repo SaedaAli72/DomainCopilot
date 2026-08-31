@@ -26,7 +26,6 @@ namespace DomainCopilot.Infrastructure.Persistence
                 HasQueryFilter(d=>d.TenantId==_tenantProvider.GetCurrentTenantId());
             modelBuilder.Entity<CitizenRequest>().
                 HasQueryFilter(r => r.TenantId == _tenantProvider.GetCurrentTenantId());
-            base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new DocumentChunkConfiguration());
             base.OnModelCreating(modelBuilder);
