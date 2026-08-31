@@ -31,6 +31,8 @@ namespace DomainCopilot.Api
             //builder.Services.AddScoped<IEmbeddingService, FakeEmbeddingService>();
             builder.Services.AddHttpClient<IEmbeddingService, GeminiEmbeddingService>();
             builder.Services.AddScoped<AskQuestionUseCase>();
+            builder.Services.AddScoped<IDocumentRepository, EfDocumentRepository>();
+            builder.Services.AddScoped<IngestDocumentUseCase>();
             builder.Services.AddScoped<ITenantProvider, StaticTenantProvider>();
             builder.Services.AddScoped<IDocumentChunkRepository, EfDocumentChunkRepository>();
 

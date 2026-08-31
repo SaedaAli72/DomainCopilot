@@ -15,9 +15,16 @@ namespace DomainCopilot.Infrastructure.Repositories
         {
             _context = context;
         }
-        public Task<List<DocumentChunk>> GetByIdsAsync(List<Guid> chunkIds, CancellationToken cancellationToken = default)
+
+        public async Task AddAsync(DocumentChunk chunk, CancellationToken cancellationToken = default)
         {
-           return _context.DocumentChunks
+            _context.DocumentChunks.Add(chunk);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<List<DocumentChunk>> GetByIdsAsync(List<Guid> chunkIds, CancellationToken cancellationToken = default)
+        {
+           return await _context.DocumentChunks
                 .Where(c=>chunkIds.Contains(c.Id))
                 .ToListAsync(cancellationToken);
         }

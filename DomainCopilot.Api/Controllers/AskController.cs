@@ -18,7 +18,7 @@ namespace DomainCopilot.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Ask([FromBody] string question)
         {
-            var tenantId = Guid.NewGuid(); // placeholder — real tenant resolution comes later
+            var tenantId = Guid.Parse("11111111-1111-1111-1111-111111111111"); // placeholder — real tenant resolution comes later
             var answer = await _askQuestionUseCase.ExecuteAsync(question, tenantId);
             return Ok(answer);
         }

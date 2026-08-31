@@ -7,6 +7,8 @@ namespace DomainCopilot.Application.Interfaces
     {
         // Fetches the actual chunk content for a list of chunk IDs
         Task<List<DocumentChunk>> GetByIdsAsync(List<Guid> chunkIds, CancellationToken cancellationToken = default);
+        Task AddAsync(DocumentChunk chunk, CancellationToken cancellationToken = default);
+
 
     }
 }
