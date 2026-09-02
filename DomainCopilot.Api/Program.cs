@@ -1,4 +1,6 @@
 
+using DomainCopilot.Application.Agents;
+using DomainCopilot.Application.Agents.Interfaces;
 using DomainCopilot.Application.Interfaces;
 using DomainCopilot.Application.UseCases;
 using DomainCopilot.Infrastructure.Embeddings;
@@ -33,6 +35,7 @@ namespace DomainCopilot.Api
             builder.Services.AddScoped<AskQuestionUseCase>();
             builder.Services.AddScoped<IDocumentRepository, EfDocumentRepository>();
             builder.Services.AddScoped<IngestDocumentUseCase>();
+            builder.Services.AddScoped<IEligibilityIdentifierAgent, EligibilityIdentifierAgent>();
             builder.Services.AddScoped<ITenantProvider, StaticTenantProvider>();
             builder.Services.AddScoped<IDocumentChunkRepository, EfDocumentChunkRepository>();
 
