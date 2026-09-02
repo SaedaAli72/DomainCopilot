@@ -36,6 +36,9 @@ namespace DomainCopilot.Api
             builder.Services.AddScoped<IDocumentRepository, EfDocumentRepository>();
             builder.Services.AddScoped<IngestDocumentUseCase>();
             builder.Services.AddScoped<IEligibilityIdentifierAgent, EligibilityIdentifierAgent>();
+            builder.Services.AddScoped<IProcedureResolverAgent, ProcedureResolverAgent>();
+            builder.Services.AddScoped<IResponseDrafterAgent, ResponseDrafterAgent>();
+            builder.Services.AddScoped<IGovernmentServiceOrchestrator, GovernmentServiceOrchestrator>();
             builder.Services.AddScoped<ITenantProvider, StaticTenantProvider>();
             builder.Services.AddScoped<IDocumentChunkRepository, EfDocumentChunkRepository>();
 

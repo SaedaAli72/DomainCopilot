@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+
+using DomainCopilot.Application.Agents.Contracts;
 
 namespace DomainCopilot.Application.Agents.Interfaces
 {
-    internal interface IResponseDrafterAgent
+    public interface IResponseDrafterAgent
     {
+        Task<DraftedResponse> DraftAsync(EligibilityResult eligibility, ProcedureResult procedure, CancellationToken cancellationToken = default);
+
     }
 }

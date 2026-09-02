@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+
+using DomainCopilot.Application.Agents.Contracts;
 
 namespace DomainCopilot.Application.Agents.Interfaces
 {
-    internal interface IProcedureResolverAgent
+    public interface IProcedureResolverAgent
     {
+        Task<ProcedureResult> ResolveAsync(string serviceType, Guid tenantId, CancellationToken cancellationToken = default);
+
     }
 }

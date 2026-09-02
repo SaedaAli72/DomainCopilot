@@ -35,18 +35,23 @@ namespace DomainCopilot.Application.Agents
 
             // Force the LLM to answer in a strict, parseable format
             var prompt = $"""
-            You are an eligibility checker. Based ONLY on the context below, decide if the citizen is eligible.
-            Respond in EXACTLY this format, nothing else:
-            DECISION: [ELIGIBLE / NOT_ELIGIBLE / ESCALATE]
-            REASON: [one sentence reason based on the context]
+                        You are an eligibility checker. Your ONLY job is to determine if the citizen meets the eligibility criteria (e.g. income limits) based on the context below.
+                        Do NOT consider missing documents or procedural information — that is handled separately. Only escalate if the eligibility criteria itself is unclear or ambiguous.
+                        Respond in EXACTLY this format, nothing else:
+                        DECISION: [ELIGIBLE / NOT_ELIGIBLE / ESCALATE]
+                        REASON: [one sentence reason based on the context]
 
-            Context:
-            {context}
+                        Context:
+                        {context}
 
-            Citizen situation: {citizenSituation}
-            """;
+                        Citizen situation: {citizenSituation}
+                        """;
 
             var rawAnswer = await _llmClient.CompleteAsync(prompt, cancellationToken);
+
+            Console.WriteLine("=== RAW LLM RESPONSE ===");
+            Console.WriteLine(rawAnswer);
+            Console.WriteLine("========================");
 
             return ParseResponse(rawAnswer);
         }
