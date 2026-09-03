@@ -55,6 +55,17 @@ namespace DomainCopilot.Domain.Entities
 
             Status = RequestStatus.Rejected;
         }
+        public string? DraftedResponseText { get; private set; }
+        public string? EligibilityReason { get; private set; }
+        public string? RequiredDocumentsSummary { get; private set; }
+
+        public void AttachDraftedResponse(string responseText, string eligibilityReason, string requiredDocumentsSummary)
+        {
+            DraftedResponseText = responseText;
+            EligibilityReason = eligibilityReason;
+            RequiredDocumentsSummary = requiredDocumentsSummary;
+            Status = RequestStatus.AwaitingApproval;
+        }
 
     }
 }
