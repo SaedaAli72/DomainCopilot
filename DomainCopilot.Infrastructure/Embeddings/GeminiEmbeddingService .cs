@@ -47,7 +47,7 @@ public class GeminiEmbeddingService : IEmbeddingService
         request.Headers.Add("x-goog-api-key", _apiKey);
 
         // نبعت الطلب فعليًا ونستنى الرد
-        var response = await _httpClient.SendAsync(request, cancellationToken);
+        var response = await SendWithRetryAsync(request, cancellationToken);
 
         // لو الرد فيه مشكلة (401, 404, إلخ)، وقفي فورًا برسالة خطأ واضحة
         response.EnsureSuccessStatusCode();
@@ -62,5 +62,39 @@ public class GeminiEmbeddingService : IEmbeddingService
             .ToArray();                        // اجمعيهم كلهم في مصفوفة نهائية
 
         return embedding;
+    }
+    private async Task<HttpResponseMessage> SendWithRetryAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        int maxRetries = 5;
+        int delayMs = 5000;
+
+        for (int attempt = 1; attempt <= maxRetries; attempt++)
+        {
+            var clonedRequest = await CloneRequestAsync(request);
+            var response = await _httpClient.SendAsync(clonedRequest, cancellationToken);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.TooManyRequests)
+                return response;
+
+            if (attempt == maxRetries) return response;
+
+            await Task.Delay(delayMs, cancellationToken);
+            delayMs *= 2;
+        }
+
+        throw new InvalidOperationException("Unreachable.");
+    }
+
+    private static async Task<HttpRequestMessage> CloneRequestAsync(HttpRequestMessage original)
+    {
+        var clone = new HttpRequestMessage(original.Method, original.RequestUri);
+        if (original.Content != null)
+        {
+            var content = await original.Content.ReadAsStringAsync();
+            clone.Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json");
+        }
+        foreach (var header in original.Headers)
+            clone.Headers.Add(header.Key, header.Value);
+        return clone;
     }
 }

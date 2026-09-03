@@ -40,7 +40,7 @@ namespace DomainCopilot.Infrastructure.Llm
             };
             request.Headers.Add("x-goog-api-key", _apiKey);
 
-            var response = await _httpClient.SendAsync(request, cancellationToken);
+            var response = await SendWithRetryAsync(request, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadFromJsonAsync<JsonElement>(cancellationToken: cancellationToken);
@@ -51,6 +51,40 @@ namespace DomainCopilot.Infrastructure.Llm
                 .GetString();
 
             return answer ?? string.Empty;
+        }
+        private async Task<HttpResponseMessage> SendWithRetryAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            int maxRetries = 5;
+            int delayMs = 5000;
+
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            {
+                var clonedRequest = await CloneRequestAsync(request);
+                var response = await _httpClient.SendAsync(clonedRequest, cancellationToken);
+
+                if (response.StatusCode != System.Net.HttpStatusCode.TooManyRequests)
+                    return response;
+
+                if (attempt == maxRetries) return response;
+
+                await Task.Delay(delayMs, cancellationToken);
+                delayMs *= 2;
+            }
+
+            throw new InvalidOperationException("Unreachable.");
+        }
+
+        private static async Task<HttpRequestMessage> CloneRequestAsync(HttpRequestMessage original)
+        {
+            var clone = new HttpRequestMessage(original.Method, original.RequestUri);
+            if (original.Content != null)
+            {
+                var content = await original.Content.ReadAsStringAsync();
+                clone.Content = new StringContent(content, System.Text.Encoding.UTF8, "application/json");
+            }
+            foreach (var header in original.Headers)
+                clone.Headers.Add(header.Key, header.Value);
+            return clone;
         }
     }
 }
