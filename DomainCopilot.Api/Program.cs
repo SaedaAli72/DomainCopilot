@@ -1,4 +1,5 @@
 
+using DomainCopilot.Api.Middleware;
 using DomainCopilot.Application.Agents;
 using DomainCopilot.Application.Agents.Interfaces;
 using DomainCopilot.Application.Interfaces;
@@ -10,6 +11,7 @@ using DomainCopilot.Infrastructure.Repositories;
 using DomainCopilot.Infrastructure.Tenancy;
 using DomainCopilot.Infrastructure.VectorStore;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace DomainCopilot.Api
 {
@@ -43,11 +45,17 @@ namespace DomainCopilot.Api
             builder.Services.AddScoped<ITenantProvider, StaticTenantProvider>();
             builder.Services.AddScoped<IDocumentChunkRepository, EfDocumentChunkRepository>();
 
+            builder.Host.UseSerilog((context, config) =>
+            {
+                config.Enrich.FromLogContext()
+                    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{CorrelationId}] {Message:lj}{NewLine}{Exception}");
+            });
             builder.Services.AddDbContext<AppDbContext>(options =>
              options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
+            app.UseMiddleware<CorrelationIdMiddleware>();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
