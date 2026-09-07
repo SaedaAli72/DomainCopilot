@@ -57,21 +57,20 @@ namespace DomainCopilot.Tests.Evaluation
                 var passed = answer.Contains(q.ExpectedKeyword, StringComparison.OrdinalIgnoreCase);
                 results.Add((q, answer, passed));
 
-                await Task.Delay(2000); // wait 2 seconds between questions to respect free-tier rate limits
+                await Task.Delay(65000); // wait 65 seconds between questions — quota resets ~every 60s per Google's error message            }
+
+                // Report
+                var passedCount = results.Count(r => r.Passed);
+                var report = string.Join("\n", results.Select(r =>
+                    $"[{(r.Passed ? "PASS" : "FAIL")}] #{r.Q.Id} ({r.Q.Category}): {r.Q.Question}\n  Expected: {r.Q.ExpectedKeyword}\n  Got: {r.Answer.Substring(0, Math.Min(100, r.Answer.Length))}...\n"));
+
+                var summary = $"\n=== EVALUATION HARNESS RESULTS ===\nPassed: {passedCount}/{questions.Count} ({100.0 * passedCount / questions.Count:F1}%)\n\n{report}";
+
+                Console.WriteLine(summary);
+                await File.WriteAllTextAsync(Path.Combine(AppContext.BaseDirectory, "evaluation-report.txt"), summary, System.Text.Encoding.UTF8);
+                // We don't assert 100% — we record actual numbers as required by FR-3
+                Assert.True(passedCount > 0, "At least some questions should pass.");
             }
-
-            // Report
-            var passedCount = results.Count(r => r.Passed);
-            var report = string.Join("\n", results.Select(r =>
-                $"[{(r.Passed ? "PASS" : "FAIL")}] #{r.Q.Id} ({r.Q.Category}): {r.Q.Question}\n  Expected: {r.Q.ExpectedKeyword}\n  Got: {r.Answer.Substring(0, Math.Min(100, r.Answer.Length))}...\n"));
-
-            var summary = $"\n=== EVALUATION HARNESS RESULTS ===\nPassed: {passedCount}/{questions.Count} ({100.0 * passedCount / questions.Count:F1}%)\n\n{report}";
-
-            Console.WriteLine(summary);
-            await File.WriteAllTextAsync(Path.Combine(AppContext.BaseDirectory, "evaluation-report.txt"), summary);
-
-            // We don't assert 100% — we record actual numbers as required by FR-3
-            Assert.True(passedCount > 0, "At least some questions should pass.");
         }
     }
 }

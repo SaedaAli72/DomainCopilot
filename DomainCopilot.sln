@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37531.7 d17.14
+VisualStudioVersion = 17.14.37531.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainCopilot.Domain", "DomainCopilot.Domain\DomainCopilot.Domain.csproj", "{4FB24D9B-8A91-4F56-A6FC-1ACE836CC30E}"
 EndProject
@@ -12,6 +12,21 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainCopilot.Api", "DomainCopilot.Api\DomainCopilot.Api.csproj", "{956D55CE-0F21-4E40-828A-2ECC85A7FAC2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainCopilot.Tests", "DomainCopilot.Tests\DomainCopilot.Tests.csproj", "{1309ECCC-2143-4416-9062-01C355124054}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		BRD.md = BRD.md
+		SDD.md = SDD.md
+		SECURITY.md = SECURITY.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ADRs", "ADRs", "{11A54CD9-A7DD-46C5-9DD0-9EFD3DDE838D}"
+	ProjectSection(SolutionItems) = preProject
+		ADR-001-chunking-strategy.md = ADR-001-chunking-strategy.md
+		ADR-002-Vector Store Choice.md = ADR-002-Vector Store Choice.md
+		ADR-003-orchestration-pattern.md = ADR-003-orchestration-pattern.md
+		ADR-004-multi-tenancy-isolation.md = ADR-004-multi-tenancy-isolation.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +57,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{11A54CD9-A7DD-46C5-9DD0-9EFD3DDE838D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E820EE01-62DE-4F6F-96FA-281864AEA1BF}

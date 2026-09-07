@@ -21,8 +21,7 @@ namespace DomainCopilot.Infrastructure.Llm
 
         public async Task<string> CompleteAsync(string prompt, CancellationToken cancellationToken = default)
         {
-            var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
-
+            var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
             var requestBody = new
             {
                 contents = new[]
@@ -65,6 +64,9 @@ namespace DomainCopilot.Infrastructure.Llm
                 if (response.StatusCode != System.Net.HttpStatusCode.TooManyRequests)
                     return response;
 
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                await File.AppendAllTextAsync("C:\\temp\\gemini-error-log.txt", $"=== 429 ERROR (attempt {attempt}) ===\n{errorBody}\n\n");
+
                 if (attempt == maxRetries) return response;
 
                 await Task.Delay(delayMs, cancellationToken);
@@ -73,7 +75,6 @@ namespace DomainCopilot.Infrastructure.Llm
 
             throw new InvalidOperationException("Unreachable.");
         }
-
         private static async Task<HttpRequestMessage> CloneRequestAsync(HttpRequestMessage original)
         {
             var clone = new HttpRequestMessage(original.Method, original.RequestUri);
