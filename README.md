@@ -115,3 +115,9 @@ https://localhost:[port]/api/ProcessRequestStream/stream?citizenSituation=...&se
    dotnet test --filter "FullyQualifiedName~TenantIsolationTests"
 ```
    → Automated proof that cross-tenant data leakage is impossible (T0).
+
+
+
+## Demo Video
+
+[Watch the 5-8 minute product demo](https://youtu.be/Uum5uxkZRHs)
