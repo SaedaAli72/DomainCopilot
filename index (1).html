@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Domain Copilot</title>
+<style>
+  :root {
+    --ink: #14293D;
+    --teal: #1F6F5C;
+    --teal-light: #E4EFE8;
+    --amber: #C97A2B;
+    --amber-light: #FBEBD8;
+    --border: #E1DACB;
+    --bg: #F5F3ED;
+    --text-muted: #6B7480;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    max-width: 900px;
+    margin: 24px auto;
+    padding: 0 16px 40px;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  h1 {
+    font-size: 21px;
+    color: var(--ink);
+    border-bottom: 3px solid var(--teal);
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+  }
+  .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 24px; }
+  h2 {
+    font-size: 15px;
+    color: var(--teal);
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-num {
+    background: var(--teal);
+    color: #fff;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  section {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  label { display: block; margin-top: 10px; font-size: 12.5px; color: var(--text-muted); font-weight: 600; }
+  input, textarea {
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 4px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13.5px;
+    background: #FEFEFC;
+  }
+  input:focus, textarea:focus { outline: none; border-color: var(--teal); }
+  button {
+    margin-top: 12px;
+    padding: 8px 18px;
+    cursor: pointer;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  button:hover { background: var(--teal); }
+  button.danger { background: transparent; color: var(--amber); border: 1px solid var(--amber); margin-right: 6px; }
+  button.danger:hover { background: var(--amber-light); }
+  pre {
+    background: var(--teal-light);
+    border: 1px solid #CBE0D8;
+    border-radius: 6px;
+    padding: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 12.5px;
+    margin-top: 12px;
+    color: #1a3d33;
+    min-height: 16px;
+  }
+  .pending-item {
+    border: 1px solid var(--border);
+    background: #FDFCF8;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+  }
+  .pending-item b { color: var(--ink); }
+  .status { font-size: 11.5px; color: var(--text-muted); margin: 4px 0; }
+  .response-text { font-size: 13px; margin: 8px 0; line-height: 1.6; }
+  .empty-note { color: var(--text-muted); font-size: 13px; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>Domain Copilot</h1>
+<p class="subtitle">Government Services Agentic RAG Platform · Domain D4 · Multi-Tenancy T0 · Base API: <code id="baseUrlDisplay"></code></p>
+
+<section>
+  <h2><span class="step-num">1</span> Ingest a Document</h2>
+  <label>File name</label>
+  <input id="ingestFileName" value="Housing_Policy.pdf">
+  <label>Raw text</label>
+  <textarea id="ingestText" rows="3">الحد الأقصى للدخل الشهري المسموح به للأسرة هو 8000 جنيه مصري.</textarea>
+  <button onclick="ingest()">Ingest Document</button>
+  <pre id="ingestResult"></pre>
+</section>
+
+<section>
+  <h2><span class="step-num">2</span> Ask a Question (Grounded RAG)</h2>
+  <label>Question</label>
+  <input id="askQuestion" value="كام الحد الأقصى للدخل؟">
+  <button onclick="ask()">Ask</button>
+  <pre id="askResult"></pre>
+</section>
+
+<section>
+  <h2><span class="step-num">3</span> Run Agent Workflow</h2>
+  <label>Citizen name</label>
+  <input id="citizenName" value="أحمد محمد">
+  <label>Citizen situation</label>
+  <input id="citizenSituation" value="المواطن دخله الشهري 6000 جنيه">
+  <label>Service type</label>
+  <input id="serviceType" value="الدعم السكني">
+  <button onclick="processRequest()">Run Workflow</button>
+  <pre id="processResult"></pre>
+</section>
+
+<section>
+  <h2><span class="step-num">4</span> Pending Approvals (Officer)</h2>
+  <button onclick="loadPending()">Refresh Pending List</button>
+  <div id="pendingList" style="margin-top:14px;"></div>
+</section>
+
+<script>
+  const BASE_URL = window.location.origin.includes("file")
+    ? "https://localhost:7023"
+    : window.location.origin;
+  document.getElementById("baseUrlDisplay").textContent = BASE_URL;
+
+  async function ingest() {
+    const body = {
+      fileName: document.getElementById("ingestFileName").value,
+      rawText: document.getElementById("ingestText").value
+    };
+    const res = await fetch(`${BASE_URL}/api/Ingest`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    document.getElementById("ingestResult").textContent = JSON.stringify(await res.json(), null, 2);
+  }
+
+  async function ask() {
+    const question = document.getElementById("askQuestion").value;
+    const res = await fetch(`${BASE_URL}/api/Ask`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(question)
+    });
+    document.getElementById("askResult").textContent = await res.text();
+  }
+
+  async function processRequest() {
+    const body = {
+      citizenName: document.getElementById("citizenName").value,
+      citizenSituation: document.getElementById("citizenSituation").value,
+      serviceType: document.getElementById("serviceType").value
+    };
+    const res = await fetch(`${BASE_URL}/api/ProcessRequest`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    document.getElementById("processResult").textContent = JSON.stringify(await res.json(), null, 2);
+    loadPending();
+  }
+
+  async function loadPending() {
+    const res = await fetch(`${BASE_URL}/api/Approval/pending`);
+    const items = await res.json();
+    const container = document.getElementById("pendingList");
+    container.innerHTML = "";
+    if (items.length === 0) {
+      container.innerHTML = "<p class='empty-note'>No pending requests.</p>";
+      return;
+    }
+    items.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "pending-item";
+      div.innerHTML = `
+        <div><b>${item.citizenName}</b> — ${item.serviceType}</div>
+        <div class="status">Status: ${item.status} · ID: ${item.id}</div>
+        <div class="response-text">${item.draftedResponseText || ""}</div>
+        <button onclick="approve('${item.id}')">Approve</button>
+        <button class="danger" onclick="reject('${item.id}')">Reject</button>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  async function approve(id) {
+    await fetch(`${BASE_URL}/api/Approval/${id}/approve`, { method: "POST" });
+    loadPending();
+  }
+
+  async function reject(id) {
+    await fetch(`${BASE_URL}/api/Approval/${id}/reject`, { method: "POST" });
+    loadPending();
+  }
+</script>
+
+</body>
+</html>
