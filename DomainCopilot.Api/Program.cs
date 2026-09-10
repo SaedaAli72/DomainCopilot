@@ -28,6 +28,15 @@ namespace DomainCopilot.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
             //builder.Services.AddScoped<ILlmClient, FakeLlmClient>();
             builder.Services.AddHttpClient<ILlmClient, GeminiLlmClient>();
             //builder.Services.AddScoped<IVectorStore, FakeVectorStore>();
@@ -55,6 +64,7 @@ namespace DomainCopilot.Api
 
             var app = builder.Build();
 
+            app.UseCors("AllowAll");
             app.UseMiddleware<CorrelationIdMiddleware>();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
