@@ -120,4 +120,4 @@ https://localhost:[port]/api/ProcessRequestStream/stream?citizenSituation=...&se
 
 ## Demo Video
 
-[Watch the 5-8 minute product demo](https://youtu.be/Uum5uxkZRHs)
+[Watch the product demo](https://youtu.be/Uum5uxkZRHs)
