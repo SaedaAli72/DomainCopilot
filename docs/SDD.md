@@ -1,4 +1,4 @@
-# System Design Document — Domain Copilot
+# System Design Document ï¿½ Domain Copilot
 
 ## Part A: Target Architecture (Unconstrained)
 
@@ -22,7 +22,7 @@ The current implementation targets a working, correctly-architected MVP within t
 and Clean Architecture boundaries over infrastructure scale. All target-vs-MVP gaps 
 are documented below with justification and closure effort.
 
-## Part B: Implemented MVP — Gap Table
+## Part B: Implemented MVP ï¿½ Gap Table
 
 | Target Component | Implemented? | Why Deferred | Interim Mitigation | Effort to Close |
 |---|---|---|---|---|

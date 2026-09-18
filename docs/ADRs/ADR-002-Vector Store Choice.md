@@ -27,8 +27,8 @@ in C# at query time, ranking and returning the top-K closest chunks.
 - **Positive**: Zero additional infrastructure; embeddings persist in the same 
   database as everything else; fully isolated behind the `IVectorStore` interface, 
   so swapping to Qdrant later requires only a new adapter class and one line in 
-  `Program.cs` — no changes to `Application` layer logic.
+  `Program.cs` ï¿½ no changes to `Application` layer logic.
 - **Negative**: Brute-force cosine similarity does not scale beyond a few thousand 
   chunks; retrieval time grows linearly with corpus size.
-- **Documented gap**: See `SDD.md` Gap Table — closing this gap is estimated at 
+- **Documented gap**: See `SDD.md` Gap Table ï¿½ closing this gap is estimated at 
   ~4 hours (implement `QdrantVectorStore : IVectorStore`).

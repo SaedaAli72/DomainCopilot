@@ -44,7 +44,7 @@ consequential decisions.
 
 - Real user authentication/login system (currently using a fixed tenant ID for testing)
 - OCR for scanned documents (only plain text/PDF text extraction covered)
-- Production-grade vector database (Qdrant/Pinecone) — using SQL Server-based vector store as a documented MVP decision
+- Production-grade vector database (Qdrant/Pinecone) ï¿½ using SQL Server-based vector store as a documented MVP decision
 - Multi-language support beyond Arabic (English UI labels only)
 - Payment or fee-collection integration
 - Mobile application

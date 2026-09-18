@@ -1,4 +1,4 @@
-# Architecture Documentation — Domain Copilot
+# Architecture Documentation ï¿½ Domain Copilot
 
 ## Layer Dependency Diagram
 
@@ -64,7 +64,7 @@ erDiagram
 ```
 
 
-## Sequence Diagram — Full Request Flow
+## Sequence Diagram ï¿½ Full Request Flow
 
 ```mermaid
 sequenceDiagram

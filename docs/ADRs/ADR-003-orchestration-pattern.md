@@ -18,7 +18,7 @@ text.
 - **Supervisor pattern** (a controlling LLM agent decides which sub-agent to call 
   next dynamically): More flexible for complex, variable workflows. Rejected because 
   our D4 domain has a fixed, well-defined sequence (eligibility must be resolved 
-  before procedure/response makes sense) — dynamic routing would add LLM cost and 
+  before procedure/response makes sense) ï¿½ dynamic routing would add LLM cost and 
   non-determinism without benefit.
 - **Planner-Executor pattern** (a planning agent generates a step sequence, then 
   executes it): Useful for open-ended tasks with variable steps. Rejected as 

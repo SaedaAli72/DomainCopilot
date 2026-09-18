@@ -1,4 +1,4 @@
-﻿# Evaluation Report — Domain Copilot
+# Evaluation Report — Domain Copilot
 
 ## Methodology
 
