@@ -126,4 +126,4 @@ https://localhost:[port]/api/ProcessRequestStream/stream?citizenSituation=...&se
 
 ## Teaching Video
 
-[Watch the 10-minute teaching sample](https://youtu.be/jkVBaFV9oCo)
+[Watch the 5-minute teaching sample](https://youtu.be/jkVBaFV9oCo)
