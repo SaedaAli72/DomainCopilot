@@ -1,4 +1,4 @@
-# AI Usage Log — Domain Copilot
+# AI Usage Log ï¿½ Domain Copilot
 
 ## What Was Delegated to AI (Claude)
 
@@ -13,9 +13,9 @@
 ## What I Wrote/Decided Myself
 
 - Final approval of every architectural decision (e.g., choosing SQL-based 
-  vector store over Qdrant for MVP scope — I confirmed this trade-off)
+  vector store over Qdrant for MVP scope ï¿½ I confirmed this trade-off)
 - All actual typing of code into Visual Studio (no copy-paste of entire files 
-  without understanding each line — verified via checkpoint Q&A during development)
+  without understanding each line ï¿½ verified via checkpoint Q&A during development)
 - Domain variant confirmation (D4 Government + T0 Multi-tenancy) from the 
   official assignment email
 - Test data content (golden set questions, seeded regulation documents)
@@ -67,4 +67,4 @@ than hiding it.
 - Manual testing via Swagger confirmed each endpoint's real behavior before 
   moving to the next feature
 - The full end-to-end RAG pipeline was validated with a real integration test 
-  (`EndToEndRagTests`) asserting a grounded, correct answer — not just "no errors"
+  (`EndToEndRagTests`) asserting a grounded, correct answer ï¿½ not just "no errors"
