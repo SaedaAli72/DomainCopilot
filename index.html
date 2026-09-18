@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DomainCopilot — منصة الخدمات الحكومية الذكية</title>
+  <meta name="description" content="منصة ذكاء اصطناعي لمعالجة طلبات المواطنين الحكومية عبر 3 وكلاء متخصصين مع بوابة اعتماد بشري" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-base:       #060B18;
+      --bg-card:       rgba(14, 22, 45, 0.85);
+      --bg-card-hover: rgba(20, 32, 64, 0.9);
+      --border:        rgba(56, 100, 200, 0.25);
+      --border-glow:   rgba(56, 149, 255, 0.5);
+      --blue:          #1E88E5;
+      --blue-light:    #42A5F5;
+      --blue-dark:     #0D47A1;
+      --cyan:          #00BCD4;
+      --green:         #00C853;
+      --green-bg:      rgba(0, 200, 83, 0.12);
+      --orange:        #FF9100;
+      --orange-bg:     rgba(255, 145, 0, 0.12);
+      --red:           #FF1744;
+      --red-bg:        rgba(255, 23, 68, 0.12);
+      --purple:        #B388FF;
+      --purple-bg:     rgba(179, 136, 255, 0.12);
+      --text-primary:   #E8F0FE;
+      --text-secondary: #8FA3CC;
+      --text-muted:     #55688E;
+      --radius-sm: 8px; --radius-md: 12px; --radius-lg: 18px; --radius-xl: 24px;
+      --shadow-card: 0 8px 32px rgba(0,0,0,0.5);
+      --sidebar-w: 230px; --header-h: 70px;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 900px 600px at 15% 15%, rgba(13,71,161,0.22) 0%, transparent 70%),
+        radial-gradient(ellipse 700px 500px at 85% 85%, rgba(0,188,212,0.12) 0%, transparent 65%),
+        radial-gradient(ellipse 500px 400px at 50% 10%, rgba(179,136,255,0.08) 0%, transparent 60%);
+    }
+
+    .shell {
+      display: grid;
+      grid-template-rows: var(--header-h) 1fr;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HEADER */
+    .header {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(6, 11, 24, 0.95); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); position: relative; z-index: 100;
+    }
+    .header::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue), var(--cyan), transparent); opacity: 0.6;
+    }
+
+    .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .logo-icon {
+      width: 42px; height: 42px; background: linear-gradient(135deg, var(--blue), var(--cyan));
+      border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;
+      font-size: 22px; box-shadow: 0 0 20px rgba(0,188,212,0.4);
+    }
+    .logo-name { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+    .logo-sub  { font-size: 11px; color: var(--text-secondary); }
+
+    .header-center {
+      display: flex; gap: 4px; background: rgba(255,255,255,0.04);
+      padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--border);
+    }
+
+    .view-tab {
+      padding: 8px 18px; border-radius: var(--radius-sm); border: none;
+      background: transparent; color: var(--text-secondary); font-family: 'Cairo', sans-serif;
+      font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all 0.25s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .view-tab.active {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      color: white; box-shadow: 0 0 16px rgba(30,136,229,0.4);
+    }
+    .view-tab:hover:not(.active) { color: var(--text-primary); background: rgba(255,255,255,0.06); }
+
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+
+    /* API CONTROLLER PILL */
+    .api-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: 30px; padding: 4px 10px 4px 14px; font-size: 12px;
+    }
+    .api-status-badge {
+      display: flex; align-items: center; gap: 6px; font-weight: 700;
+    }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #FFB300;
+      animation: pulse-anim 1.8s ease-in-out infinite;
+    }
+    .api-pill.online .pulse-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .api-pill.offline .pulse-dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
+    .api-pill.mock .pulse-dot { background: var(--purple); box-shadow: 0 0 8px var(--purple); }
+
+    .endpoint-select {
+      background: rgba(10, 18, 40, 0.9); border: 1px solid var(--border);
+      color: var(--text-secondary); border-radius: 6px; padding: 3px 8px;
+      font-family: inherit; font-size: 11.5px; outline: none; cursor: pointer;
+    }
+    .endpoint-select:focus { border-color: var(--blue); color: var(--text-primary); }
+
+    .retry-btn {
+      background: transparent; border: none; color: var(--blue-light);
+      cursor: pointer; font-size: 14px; padding: 2px 4px; border-radius: 4px;
+      transition: transform 0.2s;
+    }
+    .retry-btn:hover { transform: rotate(180deg); color: #fff; }
+
+    @keyframes pulse-anim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.75); }
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      background: rgba(8,14,30,0.95); backdrop-filter: blur(20px);
+      border-left: 1px solid var(--border); padding: 20px 12px;
+      display: flex; flex-direction: column; gap: 4px; overflow-y: auto;
+    }
+    .sidebar-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--text-muted); padding: 12px 12px 6px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border-radius: var(--radius-sm); cursor: pointer; color: var(--text-secondary);
+      font-size: 13.5px; font-weight: 600; transition: all 0.25s; border: 1px solid transparent;
+      position: relative; text-decoration: none;
+    }
+    .nav-item .nav-icon { font-size: 16px; min-width: 22px; text-align: center; }
+    .nav-item .nav-badge {
+      margin-right: auto; background: var(--orange); color: #000;
+      font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 12px;
+    }
+    .nav-item:hover { background: rgba(30,136,229,0.1); color: var(--text-primary); border-color: rgba(30,136,229,0.2); }
+    .nav-item.active { background: rgba(30,136,229,0.18); color: var(--blue-light); border-color: rgba(30,136,229,0.4); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 3px;
+      background: linear-gradient(to bottom, var(--blue), var(--cyan)); border-radius: 0 3px 3px 0;
+    }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 10px 0; }
+
+    .sidebar-mode-box {
+      margin-top: auto; padding: 14px; background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 11.5px;
+    }
+    .sidebar-mode-box strong { color: var(--text-primary); display: block; margin-bottom: 4px; }
+    .sidebar-mode-box span { color: var(--text-secondary); line-height: 1.5; display: block; }
+
+    /* MAIN */
+    .main {
+      overflow-y: auto; padding: 28px; display: flex; flex-direction: column;
+      gap: 24px; scrollbar-width: thin; scrollbar-color: rgba(30,136,229,0.3) transparent;
+    }
+
+    /* VIEWS */
+    .view-page { display: none; flex-direction: column; gap: 24px; }
+    .view-page.active { display: flex; animation: fadeSlide 0.3s ease; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* SYSTEM BANNER */
+    .system-banner {
+      display: none; align-items: center; justify-content: space-between;
+      padding: 12px 20px; border-radius: var(--radius-md);
+      background: rgba(255, 145, 0, 0.12); border: 1px solid rgba(255, 145, 0, 0.35);
+      color: #FFE082; font-size: 13px;
+    }
+    .system-banner.visible { display: flex; }
+    .system-banner-actions { display: flex; gap: 10px; align-items: center; }
+
+    /* STATS */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 18px 20px; backdrop-filter: blur(12px);
+      transition: all 0.3s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 0 26px rgba(30,136,229,0.2); border-color: var(--border-glow); }
+    .stat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .stat-icon {
+      width: 38px; height: 38px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .stat-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; }
+    .badge-green { background: var(--green-bg); color: var(--green); }
+    .badge-orange { background: var(--orange-bg); color: var(--orange); }
+    .badge-blue { background: rgba(30,136,229,0.15); color: var(--blue-light); }
+    .badge-purple { background: var(--purple-bg); color: var(--purple); }
+    .badge-red { background: var(--red-bg); color: var(--red); }
+    .stat-number { font-size: 28px; font-weight: 800; }
+    .stat-label { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; }
+
+    /* CARDS */
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 24px; backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-card); transition: border-color 0.3s;
+    }
+    .card:hover { border-color: rgba(56,149,255,0.35); }
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+    }
+    .card-title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; }
+    .icon-wrap {
+      width: 38px; height: 38px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .icon-blue   { background: rgba(30,136,229,0.2); }
+    .icon-green  { background: rgba(0,200,83,0.15); }
+    .icon-orange { background: rgba(255,145,0,0.15); }
+    .icon-purple { background: rgba(179,136,255,0.15); }
+    .icon-cyan   { background: rgba(0,188,212,0.15); }
+
+    /* PRESETS BUTTONS */
+    .preset-row {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+      flex-wrap: wrap; padding: 10px 14px; background: rgba(255,255,255,0.02);
+      border: 1px dashed var(--border); border-radius: var(--radius-sm);
+    }
+    .preset-label { font-size: 11.5px; font-weight: 700; color: var(--text-muted); }
+    .preset-chip {
+      background: rgba(30,136,229,0.12); border: 1px solid rgba(30,136,229,0.25);
+      color: var(--blue-light); padding: 3px 10px; border-radius: 20px;
+      font-size: 11.5px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .preset-chip:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    /* PIPELINE */
+    .pipeline {
+      display: flex; align-items: flex-start; margin: 18px 0 24px; position: relative;
+    }
+    .pipeline-step {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      gap: 8px; position: relative;
+    }
+    .pipeline-step:not(:last-child)::after {
+      content: ''; position: absolute; top: 22px; left: -50%; width: 100%; height: 2px;
+      background: var(--border); z-index: 0; transition: background 0.4s;
+    }
+    .pipeline-step.done::after   { background: var(--green) !important; }
+    .pipeline-step.active::after { background: linear-gradient(90deg, var(--blue), var(--border)) !important; }
+    .step-circle {
+      width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--border);
+      background: var(--bg-base); display: flex; align-items: center; justify-content: center;
+      font-size: 19px; position: relative; z-index: 1; transition: all 0.3s;
+    }
+    .pipeline-step.active .step-circle {
+      border-color: var(--blue-light); box-shadow: 0 0 16px rgba(30,136,229,0.5);
+      animation: ring-pulse 1.6s ease-in-out infinite;
+    }
+    .pipeline-step.done .step-circle {
+      border-color: var(--green); background: var(--green-bg); box-shadow: 0 0 12px rgba(0,200,83,0.3);
+    }
+    @keyframes ring-pulse {
+      0%, 100% { box-shadow: 0 0 8px rgba(30,136,229,0.3); transform: scale(1); }
+      50% { box-shadow: 0 0 20px rgba(30,136,229,0.7); transform: scale(1.04); }
+    }
+    .step-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-align: center; }
+    .pipeline-step.active .step-label { color: var(--blue-light); font-weight: 700; }
+    .pipeline-step.done .step-label { color: var(--green); }
+
+    /* FORMS */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .form-label .req { color: var(--red); }
+    .form-control {
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 11px 14px; font-family: 'Cairo', sans-serif;
+      font-size: 13.5px; color: var(--text-primary); transition: all 0.25s; outline: none; width: 100%;
+    }
+    .form-control::placeholder { color: var(--text-muted); }
+    .form-control:focus {
+      border-color: var(--blue); background: rgba(30,136,229,0.06);
+      box-shadow: 0 0 0 3px rgba(30,136,229,0.15);
+    }
+    textarea.form-control { min-height: 110px; resize: vertical; line-height: 1.7; }
+    select.form-control option { background: #0D1830; color: var(--text-primary); }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 22px; border: none; border-radius: var(--radius-sm);
+      font-family: 'Cairo', sans-serif; font-size: 13.5px; font-weight: 700;
+      cursor: pointer; transition: all 0.25s; white-space: nowrap;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--blue-light));
+      color: white; box-shadow: 0 4px 16px rgba(30,136,229,0.35);
+    }
+    .btn-primary:hover:not(:disabled) {
+      box-shadow: 0 6px 22px rgba(30,136,229,0.5); transform: translateY(-1px);
+    }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-success {
+      background: linear-gradient(135deg, #00897B, var(--green));
+      color: white; box-shadow: 0 4px 14px rgba(0,200,83,0.3);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #C62828, var(--red));
+      color: white; box-shadow: 0 4px 14px rgba(255,23,68,0.3);
+    }
+    .btn-ghost {
+      background: rgba(255,255,255,0.05); color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { color: var(--text-primary); background: rgba(255,255,255,0.08); }
+    .btn-sm { padding: 6px 14px; font-size: 12.5px; }
+    .btn-row { display: flex; gap: 12px; margin-top: 20px; align-items: center; flex-wrap: wrap; }
+
+    /* ALERTS */
+    .alert {
+      display: none; align-items: flex-start; gap: 10px; padding: 12px 16px;
+      border-radius: var(--radius-sm); font-size: 13px; line-height: 1.6; margin-bottom: 16px;
+    }
+    .alert.visible { display: flex; animation: fadeSlide 0.3s ease; }
+    .alert-info    { background: rgba(30,136,229,0.1); border: 1px solid rgba(30,136,229,0.3); color: var(--blue-light); }
+    .alert-success { background: var(--green-bg); border: 1px solid rgba(0,200,83,0.3); color: var(--green); }
+    .alert-warn    { background: var(--orange-bg); border: 1px solid rgba(255,145,0,0.3); color: var(--orange); }
+    .alert-error   { background: var(--red-bg); border: 1px solid rgba(255,23,68,0.3); color: var(--red); }
+
+    /* RESULT BLOCKS */
+    .result-section { display: flex; flex-direction: column; gap: 14px; }
+    .result-card-box {
+      background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 18px; position: relative;
+    }
+    .result-card-box.accent-blue   { border-right: 4px solid var(--blue); }
+    .result-card-box.accent-green  { border-right: 4px solid var(--green); }
+    .result-card-box.accent-orange { border-right: 4px solid var(--orange); }
+    .result-card-box.accent-purple { border-right: 4px solid var(--purple); }
+
+    .result-title {
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .result-text { font-size: 13.5px; line-height: 1.8; color: var(--text-primary); white-space: pre-wrap; word-break: break-word; }
+
+    .id-chip {
+      font-family: monospace; font-size: 12px; background: rgba(255,255,255,0.06);
+      padding: 4px 10px; border-radius: 6px; color: var(--cyan); border: 1px solid var(--border);
+      display: inline-flex; align-items: center; gap: 6px; user-select: all;
+    }
+
+    /* TABLE */
+    .table-container { overflow-x: auto; }
+    .data-table { width: 100%; border-collapse: collapse; min-width: 650px; }
+    .data-table th {
+      text-align: right; padding: 12px 16px; font-size: 11.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted);
+      border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.25);
+    }
+    .data-table td {
+      padding: 14px 16px; font-size: 13px; color: var(--text-secondary);
+      border-bottom: 1px solid rgba(56,100,200,0.12); vertical-align: middle;
+    }
+    .data-table tr:hover td { background: rgba(30,136,229,0.06); color: var(--text-primary); }
+    .td-name { font-weight: 700; color: var(--text-primary); font-size: 14px; }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(8px); z-index: 999; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-box {
+      background: rgba(10,18,40,0.98); border: 1px solid var(--border-glow);
+      border-radius: var(--radius-xl); padding: 32px; max-width: 640px; width: 92%;
+      max-height: 88vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.85);
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; flex-wrap: wrap; }
+
+    /* SPINNER */
+    .spinner {
+      display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* PROGRESS */
+    .progress-wrap { background: rgba(255,255,255,0.06); border-radius: 4px; height: 5px; overflow: hidden; margin-top: 10px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--cyan)); border-radius: 4px; transition: width 0.4s ease; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+    .empty-icon { font-size: 52px; margin-bottom: 12px; opacity: 0.5; }
+    .empty-title { font-size: 16px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: rgba(14, 26, 56, 0.95); border: 1px solid var(--border-glow);
+      color: #fff; padding: 12px 24px; border-radius: 30px; font-size: 13.5px;
+      font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.6); opacity: 0;
+      pointer-events: none; transition: all 0.3s; z-index: 10000;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* OFFICIAL STAMP */
+    .official-stamp {
+      display: inline-flex; align-items: center; gap: 8px; border: 2px dashed var(--green);
+      color: var(--green); border-radius: 8px; padding: 6px 14px; font-weight: 800; font-size: 13px;
+      background: var(--green-bg); transform: rotate(-2deg); margin: 10px 0;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(30,136,229,0.25); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(30,136,229,0.5); }
+
+    @media (max-width: 960px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .two-col, .form-grid { grid-template-columns: 1fr; }
+      .header-center { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo" onclick="switchView('citizen')">
+      <div class="logo-icon">🏛️</div>
+      <div>
+        <div class="logo-name">DomainCopilot</div>
+        <div class="logo-sub">منصة الخدمات الحكومية الذكية · Multi-Agent RAG</div>
+      </div>
+    </div>
+
+    <!-- MAIN TABS -->
+    <div class="header-center">
+      <button class="view-tab active" id="tab-citizen" onclick="switchView('citizen')">👤 بوابة المواطن</button>
+      <button class="view-tab" id="tab-track" onclick="switchView('track')">🔍 تتبع طلب</button>
+      <button class="view-tab" id="tab-officer" onclick="switchView('officer')">👮 بوابة الموظف</button>
+      <button class="view-tab" id="tab-docs" onclick="switchView('docs')">📚 قاعدة المعرفة (RAG)</button>
+    </div>
+
+    <!-- API CONNECTOR -->
+    <div class="header-actions">
+      <div class="api-pill checking" id="apiPill">
+        <div class="pulse-dot"></div>
+        <span class="api-status-badge" id="apiStatusText">جاري فحص الخادم...</span>
+        <select class="endpoint-select" id="apiEndpointSelect" onchange="changeApiEndpoint(this.value)">
+          <option value="auto">⚡ كشف تلقائي</option>
+          <option value="http://localhost:5078/api">HTTP :5078 (موصى به محلياً)</option>
+          <option value="https://localhost:7023/api">HTTPS :7023 (الافتراضي)</option>
+          <option value="mock">🧪 الوضع التجريبي (Offline Demo)</option>
+        </select>
+        <button class="retry-btn" title="إعادة فحص الاتصال" onclick="checkApiConnection(true)">🔄</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-label">بوابة المواطن</div>
+    <div class="nav-item active" id="nav-citizen" onclick="switchView('citizen')">
+      <span class="nav-icon">📝</span> تقديم طلب ذكي
+    </div>
+    <div class="nav-item" id="nav-track" onclick="switchView('track')">
+      <span class="nav-icon">🔍</span> تتبع حالة الطلب
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">بوابة الموظف الحكومي</div>
+    <div class="nav-item" id="nav-officer" onclick="switchView('officer')">
+      <span class="nav-icon">⚖️</span> الاعتماد والمراجعة
+      <span class="nav-badge" id="pendingBadge">0</span>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">اللوائح والاستدلال</div>
+    <div class="nav-item" id="nav-docs" onclick="switchView('docs')">
+      <span class="nav-icon">📥</span> رفع وثيقة لائحة
+    </div>
+    <div class="nav-item" id="nav-ask" onclick="switchView('docs'); focusAskInput();">
+      <span class="nav-icon">💬</span> سؤال واستعلام بالدليل
+    </div>
+
+    <div class="sidebar-mode-box">
+      <strong>🏢 بيئة العمل المعزولة</strong>
+      <span>مستأجر موحد (Tenant T0) مع نظام حماية البيانات وفصل الصلاحيات.</span>
+      <div style="margin-top:8px;font-size:11px;color:var(--cyan);cursor:pointer;" onclick="toggleDemoMode()">
+        🔄 تبديل الوضع (اتصال حقيقي / محاكاة)
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <main class="main">
+
+    <!-- SYSTEM OFFLINE WARNING BANNER -->
+    <div class="system-banner" id="systemBanner">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">⚠️</span>
+        <div>
+          <strong>الخادم المحلي غير متصل حالياً!</strong>
+          <span style="display:block;opacity:0.9;font-size:12px;">
+            تأكد من تشغيل المشروع عبر <code>dotnet run --project DomainCopilot.Api</code>. يمكنك استخدام منفذ HTTP لتفادي تحذيرات شهادات SSL المحلية.
+          </span>
+        </div>
+      </div>
+      <div class="system-banner-actions">
+        <button class="btn btn-ghost btn-sm" onclick="switchToHttp()">التبديل إلى HTTP :5078</button>
+        <button class="btn btn-primary btn-sm" onclick="activateMockMode()">تفعيل وضع العرض التوضيحي (Demo)</button>
+      </div>
+    </div>
+
+    <!-- ==================== VIEW 1: CITIZEN ==================== -->
+    <div class="view-page active" id="view-citizen">
+
+      <!-- Stats Bar -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-top"><div class="stat-icon icon-blue">📊</div><span class="stat-badge badge-blue">النظام</span></div>
+          <div class="stat-number" id="stat-total">0</div>
+          <div class="stat-label">إجمالي الطلبات المسجلة</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top"><div class="stat-icon icon-orange">⏳</div><span class="stat-badge badge-orange">تدقيق</span></div>
+          <div class="stat-number" id="stat-pending">0</div>
+          <div class="stat-label">بانتظار اعتماد الموظف</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top"><div class="stat-icon icon-green">✅</div><span class="stat-badge badge-green">معتمد</span></div>
+          <div class="stat-number" id="stat-approved">0</div>
+          <div class="stat-label">طلبات تمت الموافقة عليها</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top"><div class="stat-icon icon-purple">🤖</div><span class="stat-badge badge-purple">AI Active</span></div>
+          <div class="stat-number">3</div>
+          <div class="stat-label">وكلاء ذكاء اصطناعي متعاونين</div>
+        </div>
+      </div>
+
+      <!-- Application Card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="icon-wrap icon-blue">📝</div>
+            <div>
+              تقديم طلب خدمة حكومية
+              <div style="font-size:12px;font-weight:400;color:var(--text-secondary);margin-top:2px;">
+                سيقوم وكلاء الذكاء الاصطناعي بدراسة الحالة ومطابقة الشروط وصياغة الرد الرسمي
+              </div>
+            </div>
+          </div>
+          <span class="stat-badge badge-blue">Gemini 1.5 + RAG</span>
+        </div>
+
+        <!-- 3-Agent Workflow Visualizer -->
+        <div class="pipeline">
+          <div class="pipeline-step" id="step-eligibility">
+            <div class="step-circle">🎯</div>
+            <div class="step-label">وكيل فحص الأهلية</div>
+          </div>
+          <div class="pipeline-step" id="step-procedure">
+            <div class="step-circle">📋</div>
+            <div class="step-label">وكيل تحديد الإجراءات</div>
+          </div>
+          <div class="pipeline-step" id="step-draft">
+            <div class="step-circle">✍️</div>
+            <div class="step-label">وكيل صياغة القرار</div>
+          </div>
+          <div class="pipeline-step" id="step-approval">
+            <div class="step-circle">👮</div>
+            <div class="step-label">بوابة الاعتماد البشري</div>
+          </div>
+        </div>
+
+        <!-- Preset Quick-Fill Row -->
+        <div class="preset-row">
+          <span class="preset-label">💡 تجربة سريعة بالبيانات المعتمدة:</span>
+          <button class="preset-chip" type="button" onclick="fillPreset('housing')">🏠 طلب دعم سكني (أحمد محمد)</button>
+          <button class="preset-chip" type="button" onclick="fillPreset('social')">❤️ رعاية اجتماعية (فاطمة حسن)</button>
+          <button class="preset-chip" type="button" onclick="fillPreset('health')">🏥 تأمين صحي شامل (محمود خليل)</button>
+        </div>
+
+        <div class="alert alert-info visible" id="citizen-info-alert">
+          <span>ℹ️</span>
+          <span>يتم تطبيق عزلة البيانات (Multi-Tenant T0). لن تخرج النتيجة للمواطن إلا بعد مراجعة الموظف المختص واعتمادها رسمياً.</span>
+        </div>
+        <div class="alert alert-success" id="citizen-success-alert"></div>
+        <div class="alert alert-error" id="citizen-error-alert"></div>
+
+        <form id="citizenForm" onsubmit="handleCitizenSubmit(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">اسم المواطن بالكامل <span class="req">*</span></label>
+              <input class="form-control" id="formName" type="text" placeholder="مثال: أحمد محمد علي" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">نوع الخدمة الحكومية <span class="req">*</span></label>
+              <select class="form-control" id="formService" required>
+                <option value="">— اختر الخدمة المطلوبة —</option>
+                <option value="الدعم السكني">🏠 الدعم السكني</option>
+                <option value="الرعاية الاجتماعية">❤️ الرعاية الاجتماعية</option>
+                <option value="التأمين الصحي">🏥 التأمين الصحي</option>
+                <option value="المنحة التعليمية">🎓 المنحة التعليمية</option>
+                <option value="تجديد جواز السفر">✈️ تجديد جواز السفر</option>
+                <option value="بطاقة الهوية">🪪 بطاقة الهوية</option>
+                <option value="دعم ذوي الاحتياجات">♿ دعم ذوي الاحتياجات</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">شرح الوضع المالي والاجتماعي بالتفصيل <span class="req">*</span></label>
+              <textarea class="form-control" id="formSituation"
+                placeholder="صف حالتك بدقة لتمكين وكيل الأهلية من المطابقة، مثلاً: الدخل الشهري 6000 جنيه، متزوج ولدي طفلين، لا أملك سكناً مسجلاً..."
+                required></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" type="submit" id="submitCitizenBtn">
+              <span id="submitSpinner" class="spinner" style="display:none"></span>
+              <span id="submitIcon">🚀</span>
+              <span id="submitText">إرسال الطلب للمعالجة الذكية</span>
+            </button>
+            <button class="btn btn-ghost" type="button" onclick="handleStreamTest()">
+              <span>⚡</span>
+              <span>تشغيل البث الحي للأحداث (Live SSE Stream)</span>
+            </button>
+            <button class="btn btn-ghost" type="button" onclick="resetCitizenForm()">
+              <span>🔄</span>
+              <span>إعادة تعيين</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Result Card -->
+      <div class="card" id="citizenResultCard" style="display:none;">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="icon-wrap icon-green">📋</div>
+            <div>
+              نتيجة معالجة الطلب عبر وكلاء الذكاء الاصطناعي
+              <div style="font-size:12px;font-weight:400;color:var(--text-secondary);margin-top:2px;">
+                تقرير فحص الأهلية والوثائق والرد الرسمي المُصاغ
+              </div>
+            </div>
+          </div>
+          <div id="resultStatusBadge"></div>
+        </div>
+
+        <div id="processingStreamBox" style="display:none;margin-bottom:18px;">
+          <div class="alert alert-info visible">
+            <span class="spinner"></span>
+            <span id="processingStreamMsg">جاري تشغيل الوكلاء بالتتابع...</span>
+          </div>
+          <div class="progress-wrap"><div class="progress-fill" id="processingProgressFill" style="width:0%"></div></div>
+        </div>
+
+        <div class="result-section" id="citizenResultDetails"></div>
+      </div>
+
+    </div><!-- /view-citizen -->
+
+
+    <!-- ==================== VIEW 2: TRACK ==================== -->
+    <div class="view-page" id="view-track">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="icon-wrap icon-cyan">🔍</div>
+            <div>
+              تتبع حالة الطلب بالرقم التعريفي (Request Tracking)
+              <div style="font-size:12px;font-weight:400;color:var(--text-secondary);margin-top:2px;">
+                استعلم عن موقف طلبك ومطالعة القرار الرسمي الصادر من الجهة الحكومية
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+          <input class="form-control" id="trackInputId" placeholder="أدخل الرقم التعريفي للطلب (GUID)، مثال: 3fa85f64-5717-4562-b3fc-2c963f66afa6" style="flex:1;min-width:280px;" />
+          <button class="btn btn-primary" onclick="trackRequestById()">
+            <span>🔎</span>
+            <span>استعلام</span>
+          </button>
+          <button class="btn btn-ghost" onclick="trackLastSubmitted()">
+            <span>📌</span>
+            <span>آخر طلب تم تقديمه</span>
+          </button>
+        </div>
+
+        <div id="trackResultBox" style="display:none;"></div>
+      </div>
+    </div><!-- /view-track -->
+
+
+    <!-- ==================== VIEW 3: OFFICER ==================== -->
+    <div class="view-page" id="view-officer">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="icon-wrap icon-orange">⚖️</div>
+            <div>
+              لوحة المراجعة والاعتماد البشري (Human-in-the-Loop Gate)
+              <div style="font-size:12px;font-weight:400;color:var(--text-secondary);margin-top:2px;">
+                مراجعة قرارات وردود وكلاء الذكاء الاصطناعي واعتمادها أو رفضها رسمياً
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm" onclick="loadOfficerApprovals()">🔄 تحديث القائمة</button>
+          </div>
+        </div>
+
+        <!-- Filters & Search -->
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-ghost btn-sm active" id="btn-filter-all" onclick="filterOfficerList('all', this)">الكل</button>
+          <button class="btn btn-ghost btn-sm" id="btn-filter-pending" onclick="filterOfficerList('AwaitingApproval', this)">⏳ بانتظار الاعتماد</button>
+          <button class="btn btn-ghost btn-sm" id="btn-filter-approved" onclick="filterOfficerList('Approved', this)">✅ تم الاعتماد</button>
+          <button class="btn btn-ghost btn-sm" id="btn-filter-rejected" onclick="filterOfficerList('Rejected', this)">❌ تم الرفض</button>
+          <button class="btn btn-ghost btn-sm" id="btn-filter-escalated" onclick="filterOfficerList('Escalated', this)">⚠️ تم التصعيد</button>
+
+          <input class="form-control" id="officerSearchInput" placeholder="🔍 بحث باسم المواطن أو الخدمة..."
+            style="max-width:260px;padding:7px 12px;font-size:12.5px;margin-right:auto;"
+            oninput="handleOfficerSearch()" />
+        </div>
+
+        <!-- Approvals Table Container -->
+        <div class="table-container" id="officerTableWrap">
+          <div class="empty-state">
+            <div class="empty-icon">⏳</div>
+            <div class="empty-title">جاري تحميل الطلبات...</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /view-officer -->
+
+
+    <!-- ==================== VIEW 4: DOCS & RAG ==================== -->
+    <div class="view-page" id="view-docs">
+      <div class="two-col">
+
+        <!-- INGESTION CARD -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <div class="icon-wrap icon-cyan">📥</div>
+              <div>
+                رفع وفهرسة وثيقة لائحة (RAG Ingestion)
+                <div style="font-size:12px;font-weight:400;color:var(--text-secondary);margin-top:2px;">
+                  تقسيم النص وتوليد Embeddings عبر Gemini وتخزين الفيكتور في SQL
+                </div>
+              </div>
+            </div>
+            <span class="stat-badge badge-blue">Vector Store</span>
+          </div>
+
+          <div class="preset-row">
+            <span class="preset-label">💡 تجربة سريعة:</span>
+            <button class="preset-chip" type="button" onclick="fillDocPreset()">📄 لائحة الدعم السكني (README)</button>
+          </div>
+
+          <div class="alert alert-info visible">
+            <span>ℹ️</span>
+            <span>الوثائق تخضع لعزل المستأجر (Tenant T0) لضمان عدم تسريب لوائح جهة لأخرى.</span>
+          </div>
+          <div class="alert alert-success" id="ingestSuccessAlert"></div>
+          <div class="alert alert-error" id="ingestErrorAlert"></div>
+
+          <div class="form-group" style="margin-bottom:14px;">
+            <label class="form-label">اسم الملف أو اللائحة <span class="req">*</span></label>
+            <input class="form-control" id="docFileName" placeholder="مثال: Housing_Policy.pdf" />
+          </div>
+
+          <div class="form-group" style="margin-bottom:16px;">
+            <label class="form-label">نص السياسة / اللائحة الحكومية <span class="req">*</span></label>
+            <textarea class="form-control" id="docRawText" style="min-height:120px;"
+              placeholder="اكتب أو الصق نص اللائحة هنا..."></textarea>
+          </div>
+
+          <button class="btn btn-primary" id="ingestBtn" onclick="handleIngestDocument()">
+            <span class="spinner" id="ingestSpinner" style="display:none;"></span>
+            <span>📤 رفع وفهرسة الوثيقة</span>
+          </button>
+
+          <div id="ingestResultBox" style="display:none;margin-top:16px;"></div>
+        </div>
+
+        <!-- ASK / GROUNDED QA CARD -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <div class="icon-wrap icon-purple">💬</div>
+              <div>
+                سؤال واستعلام بالدليل (Grounded QA)
+                <div style="font-size:12px;font-weight:400;color:var(--text-secondary);margin-top:2px;">
+                  استعلام مباشر يجيب فقط استناداً إلى الوثائق واللوائح المفهرسة
+                </div>
+              </div>
+            </div>
+            <span class="stat-badge badge-purple">Grounded RAG</span>
+          </div>
+
+          <div class="preset-row">
+            <span class="preset-label">💡 أسئلة تجريبية:</span>
+            <button class="preset-chip" type="button" onclick="fillAskPreset('income')">❓ كام الحد الأقصى للدخل؟</button>
+            <button class="preset-chip" type="button" onclick="fillAskPreset('docs')">❓ ما هي الوثائق المطلوبة؟</button>
+          </div>
+
+          <div class="alert alert-info visible">
+            <span>ℹ️</span>
+            <span>يعتمد النظام على مطابقة المتجهات (Cosine Similarity) لمنع الهلوسة (Hallucination).</span>
+          </div>
+          <div class="alert alert-error" id="askErrorAlert"></div>
+
+          <div class="form-group" style="margin-bottom:16px;">
+            <label class="form-label">اكتب استفسارك <span class="req">*</span></label>
+            <textarea class="form-control" id="askInput" style="min-height:100px;"
+              placeholder="مثال: كام الحد الأقصى للدخل الشهري المسموح به للحصول على الدعم السكني؟"></textarea>
+          </div>
+
+          <button class="btn btn-primary" id="askBtn" onclick="handleAskQuestion()">
+            <span class="spinner" id="askSpinner" style="display:none;"></span>
+            <span>🔍 استعلام واستخراج الإجابة</span>
+          </button>
+
+          <div id="askResultBox" style="display:none;margin-top:16px;"></div>
+        </div>
+
+      </div>
+    </div><!-- /view-docs -->
+
+  </main>
+</div><!-- /shell -->
+
+<!-- DETAIL MODAL FOR OFFICER -->
+<div class="modal-overlay" id="officerModal" onclick="closeModalOnOverlay(event)">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">
+      <span>⚖️ تفاصيل الطلب والمراجعة</span>
+    </div>
+    <div id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toastBox">
+  <span id="toastIcon">🔔</span>
+  <span id="toastMsg">تم تنفيذ العملية بنجاح</span>
+</div>
+
+<script>
+  /* ==========================================================================
+     DOMAINCOPILOT FRONTEND CORE CONTROLLER
+     ========================================================================== */
+
+  const ENDPOINTS = [
+    'http://localhost:5078/api',
+    'https://localhost:7023/api'
+  ];
+
+  let currentApi = ENDPOINTS[0];
+  let isMockMode = false;
+  let allOfficerRequests = [];
+  let officerFilter = 'all';
+  let lastSubmittedRequestId = localStorage.getItem('lastSubmittedRequestId') || '';
+
+  // Local storage cache for mock mode or offline testing
+  let mockRequests = [
+    {
+      id: 'd401a882-7201-49b2-a42f-871d6f1a8e01',
+      citizenName: 'أحمد محمد علي',
+      serviceType: 'الدعم السكني',
+      status: 'AwaitingApproval',
+      createdAt: new Date(Date.now() - 3600000).toISOString(),
+      draftedResponseText: 'السيد المواطن أحمد محمد علي، بعد فحص بياناتك تبين استيفاؤك لشرط الدخل الشهري المعتمد (أقل من 8000 جنيه). يرجى التوجه لمركز الخدمة لتقديم المستندات الثبوتية.',
+      eligibilityReason: 'المواطن دخله 6000 جنيه وهو أقل من الحد الأقصى المقرر 8000 جنيه مصري وفق لائحة الإسكان.',
+      requiredDocumentsSummary: 'بطاقة الرقم القومي سارية، مفردات مرتب معتمدة، قيد عائلي مميكن، إيصال مرافق حديث'
+    },
+    {
+      id: 'e512b993-8312-5ac3-b530-982e7f2b9f02',
+      citizenName: 'فاطمة حسن إبراهيم',
+      serviceType: 'الرعاية الاجتماعية',
+      status: 'Approved',
+      createdAt: new Date(Date.now() - 86400000).toISOString(),
+      draftedResponseText: 'تمت الموافقة على طلب الرعاية الاجتماعية وصرف الدعم الاستثنائي للمواطنة فاطمة حسن.',
+      eligibilityReason: 'تنطبق كافة معايير الأرامل والمعيلات على الحالة.',
+      requiredDocumentsSummary: 'شهادة الوفاة، شهادات ميلاد الأبناء، بحث اجتماعي'
+    }
+  ];
+
+  /* ---------------- INIT ---------------- */
+  window.addEventListener('DOMContentLoaded', async () => {
+    initEndpointSelection();
+    await checkApiConnection();
+    await loadStats();
+    if (lastSubmittedRequestId) {
+      document.getElementById('trackInputId').value = lastSubmittedRequestId;
+    }
+  });
+
+  function initEndpointSelection() {
+    const saved = localStorage.getItem('dc_preferred_api');
+    if (saved) {
+      currentApi = saved;
+      const sel = document.getElementById('apiEndpointSelect');
+      if (sel) sel.value = saved;
+    }
+  }
+
+  function changeApiEndpoint(val) {
+    if (val === 'auto') {
+      localStorage.removeItem('dc_preferred_api');
+      checkApiConnection(true);
+    } else if (val === 'mock') {
+      activateMockMode();
+    } else {
+      currentApi = val;
+      isMockMode = false;
+      localStorage.setItem('dc_preferred_api', val);
+      checkApiConnection(true);
+    }
+  }
+
+  function switchToHttp() {
+    currentApi = 'http://localhost:5078/api';
+    document.getElementById('apiEndpointSelect').value = currentApi;
+    localStorage.setItem('dc_preferred_api', currentApi);
+    checkApiConnection(true);
+  }
+
+  function activateMockMode() {
+    isMockMode = true;
+    updatePillState('mock', '🧪 وضع المحاكاة النشط');
+    document.getElementById('systemBanner').classList.remove('visible');
+    document.getElementById('apiEndpointSelect').value = 'mock';
+    showToast('تم تفعيل وضع المحاكاة (Demo Mode) — يمكنك اختبار كامل الفلو الآن!');
+    loadStats();
+    if (document.getElementById('view-officer').classList.contains('active')) {
+      loadOfficerApprovals();
+    }
+  }
+
+  function toggleDemoMode() {
+    if (isMockMode) {
+      isMockMode = false;
+      checkApiConnection(true);
+    } else {
+      activateMockMode();
+    }
+  }
+
+  /* ---------------- API HEALTH CHECK ---------------- */
+  async function checkApiConnection(userInitiated = false) {
+    if (isMockMode) return;
+    updatePillState('checking', 'جاري فحص الاتصال...');
+
+    const targets = localStorage.getItem('dc_preferred_api') 
+      ? [localStorage.getItem('dc_preferred_api'), ...ENDPOINTS.filter(x => x !== localStorage.getItem('dc_preferred_api'))]
+      : ENDPOINTS;
+
+    let connected = false;
+
+    for (const url of targets) {
+      try {
+        const ctrl = new AbortController();
+        const timeout = setTimeout(() => ctrl.abort(), 2500);
+        const res = await fetch(`${url}/Approval/pending`, { signal: ctrl.signal });
+        clearTimeout(timeout);
+
+        if (res.ok || res.status === 200) {
+          currentApi = url;
+          connected = true;
+          isMockMode = false;
+          updatePillState('online', `متصل (${new URL(url).port || 'API'})`);
+          document.getElementById('systemBanner').classList.remove('visible');
+          document.getElementById('apiEndpointSelect').value = url;
+          if (userInitiated) showToast('✅ تم الاتصال بالخادم بنجاح!');
+          loadStats();
+          break;
+        }
+      } catch (err) {
+        // continue to next endpoint
+      }
+    }
+
+    if (!connected) {
+      updatePillState('offline', 'الخادم غير متاح');
+      document.getElementById('systemBanner').classList.add('visible');
+      if (userInitiated) {
+        showToast('❌ لم يتم العثور على خادم يعمل. يمكنك تفعيل وضع المحاكاة.');
+      }
+    }
+  }
+
+  function updatePillState(status, text) {
+    const pill = document.getElementById('apiPill');
+    pill.className = `api-pill ${status}`;
+    document.getElementById('apiStatusText').textContent = text;
+  }
+
+  /* ---------------- NAVIGATION ---------------- */
+  function switchView(viewName) {
+    document.querySelectorAll('.view-page').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.view-tab').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+    const page = document.getElementById(`view-${viewName}`);
+    if (page) page.classList.add('active');
+
+    const tab = document.getElementById(`tab-${viewName}`);
+    if (tab) tab.classList.add('active');
+
+    const nav = document.getElementById(`nav-${viewName}`);
+    if (nav) nav.classList.add('active');
+
+    if (viewName === 'officer') {
+      loadOfficerApprovals();
+    } else if (viewName === 'track' && lastSubmittedRequestId) {
+      document.getElementById('trackInputId').value = lastSubmittedRequestId;
+    }
+  }
+
+  function focusAskInput() {
+    setTimeout(() => {
+      const el = document.getElementById('askInput');
+      if (el) el.focus();
+    }, 150);
+  }
+
+  /* ---------------- STATS ---------------- */
+  async function loadStats() {
+    let requests = [];
+    if (isMockMode) {
+      requests = mockRequests;
+    } else {
+      try {
+        const res = await fetch(`${currentApi}/Approval/pending`);
+        if (res.ok) {
+          requests = await res.json();
+        }
+      } catch (e) {
+        requests = mockRequests;
+      }
+    }
+
+    const total = requests.length;
+    const pending = requests.filter(r => r.status === 'AwaitingApproval').length;
+    const approved = requests.filter(r => r.status === 'Approved').length;
+
+    animateNumber('stat-total', total);
+    animateNumber('stat-pending', pending);
+    animateNumber('stat-approved', approved);
+
+    const badge = document.getElementById('pendingBadge');
+    badge.textContent = pending;
+    badge.style.display = pending > 0 ? 'inline-block' : 'none';
+  }
+
+  function animateNumber(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let curr = 0;
+    const step = Math.max(1, Math.ceil(target / 15));
+    const interval = setInterval(() => {
+      curr = Math.min(curr + step, target);
+      el.textContent = curr;
+      if (curr >= target) clearInterval(interval);
+    }, 25);
+  }
+
+  /* ---------------- PRESETS ---------------- */
+  function fillPreset(type) {
+    if (type === 'housing') {
+      document.getElementById('formName').value = 'أحمد محمد علي';
+      document.getElementById('formService').value = 'الدعم السكني';
+      document.getElementById('formSituation').value = 'المواطن دخله الشهري 6000 جنيه، متزوج ويعول 3 أطفال، ولا يمتلك أي عقار أو سكن تمليك.';
+    } else if (type === 'social') {
+      document.getElementById('formName').value = 'فاطمة حسن إبراهيم';
+      document.getElementById('formService').value = 'الرعاية الاجتماعية';
+      document.getElementById('formSituation').value = 'المواطنة أرملة وتعول طفلين في مراحل التعليم المختلفة وبدون دخل شهري ثابت.';
+    } else if (type === 'health') {
+      document.getElementById('formName').value = 'محمود خليل البدري';
+      document.getElementById('formService').value = 'التأمين الصحي';
+      document.getElementById('formSituation').value = 'مواطن يعاني من مرض مزمن ويحتاج إلى تغطية تكاليف العلاج الشهري والتحاليل الدورية.';
+    }
+  }
+
+  function fillDocPreset() {
+    document.getElementById('docFileName').value = 'Housing_Policy.pdf';
+    document.getElementById('docRawText').value = 'الحد الأقصى للدخل الشهري المسموح به للأسرة هو 8000 جنيه مصري للحصول على الدعم السكني، ويشترط ألا يكون المستفيد مالكاً لوحدة سكنية مسجلة.';
+  }
+
+  function fillAskPreset(type) {
+    if (type === 'income') {
+      document.getElementById('askInput').value = 'كام الحد الأقصى للدخل الشهري المسموح به للحصول على الدعم السكني؟';
+    } else if (type === 'docs') {
+      document.getElementById('askInput').value = 'ما هي شروط الاستحقاق والمستندات المطلوبة؟';
+    }
+  }
+
+  /* ---------------- PIPELINE UI ---------------- */
+  const AGENT_STEPS = ['eligibility', 'procedure', 'draft', 'approval'];
+
+  function resetPipelineSteps() {
+    AGENT_STEPS.forEach(s => {
+      const el = document.getElementById(`step-${s}`);
+      if (el) el.classList.remove('active', 'done');
+    });
+  }
+
+  function setPipelineStep(idx) {
+    for (let i = 0; i < idx; i++) {
+      const el = document.getElementById(`step-${AGENT_STEPS[i]}`);
+      if (el) { el.classList.add('done'); el.classList.remove('active'); }
+    }
+    if (idx < AGENT_STEPS.length) {
+      const el = document.getElementById(`step-${AGENT_STEPS[idx]}`);
+      if (el) { el.classList.remove('done'); el.classList.add('active'); }
+    }
+  }
+
+  function completeAllPipeline() {
+    AGENT_STEPS.forEach(s => {
+      const el = document.getElementById(`step-${s}`);
+      if (el) { el.classList.remove('active'); el.classList.add('done'); }
+    });
+  }
+
+  /* ---------------- CITIZEN REQUEST SUBMISSION ---------------- */
+  async function handleCitizenSubmit(e) {
+    e.preventDefault();
+    hideAlert('citizen-success-alert');
+    hideAlert('citizen-error-alert');
+
+    const name = document.getElementById('formName').value.trim();
+    const service = document.getElementById('formService').value;
+    const situation = document.getElementById('formSituation').value.trim();
+
+    if (!name || !service || !situation) {
+      showAlert('citizen-error-alert', 'يرجى استيفاء جميع الحقول المطلوبة قبل التقديم.');
+      return;
+    }
+
+    const btn = document.getElementById('submitCitizenBtn');
+    btn.disabled = true;
+    document.getElementById('submitSpinner').style.display = 'inline-block';
+    document.getElementById('submitIcon').style.display = 'none';
+    document.getElementById('submitText').textContent = 'جاري المعالجة الذكية...';
+
+    // Show result card in progress state
+    const resCard = document.getElementById('citizenResultCard');
+    resCard.style.display = 'block';
+    resCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    const streamBox = document.getElementById('processingStreamBox');
+    streamBox.style.display = 'block';
+    document.getElementById('citizenResultDetails').innerHTML = '';
+    document.getElementById('resultStatusBadge').innerHTML = '<span class="stat-badge badge-blue">🔄 قيد التحليل...</span>';
+
+    resetPipelineSteps();
+
+    // Stage 1: Eligibility Agent
+    setPipelineStep(0);
+    setStreamingProgress('🎯 وكيل الأهلية: يفحص الشروط ومطابقة الحالة والحدود المالية...', 25);
+    await sleep(700);
+
+    // Stage 2: Procedure Agent
+    setPipelineStep(1);
+    setStreamingProgress('📋 وكيل الإجراءات: يحدد المستندات المطلوبة ومسار المعاملة الحكومية...', 55);
+    await sleep(600);
+
+    // Stage 3: Response Drafter Agent
+    setPipelineStep(2);
+    setStreamingProgress('✍️ وكيل صياغة القرار: يعد الخطاب الرسمي الموجه للمواطن...', 80);
+
+    try {
+      let resultData = null;
+
+      if (isMockMode) {
+        await sleep(900);
+        const newId = 'req-' + Math.random().toString(36).substring(2, 9) + '-2026';
+        resultData = {
+          requestId: newId,
+          status: 'awaiting_approval',
+          responseText: `السيد المواطن ${name}، نحيطكم علماً بأنه قد تم فحص طلبكم الخاص بـ (${service}) مبدئياً وتبين توافق حالتكم مع معايير الاستحقاق. الطلب الآن معروض على الموظف المختص للاعتماد النهائي.`,
+          eligibilityReason: `تنطبق الشروط بناءً على إفادتكم: (${situation.substring(0, 70)}...)`,
+          requiredDocumentsSummary: 'بطاقة الرقم القومي، إثبات الدخل المعتمد، إيصال مرافق حديث'
+        };
+
+        // Add to local mock database
+        mockRequests.unshift({
+          id: resultData.requestId,
+          citizenName: name,
+          serviceType: service,
+          status: 'AwaitingApproval',
+          createdAt: new Date().toISOString(),
+          draftedResponseText: resultData.responseText,
+          eligibilityReason: resultData.eligibilityReason,
+          requiredDocumentsSummary: resultData.requiredDocumentsSummary
+        });
+
+      } else {
+        // Real Backend Call
+        const res = await fetch(`${currentApi}/ProcessRequest`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            citizenName: name,
+            citizenSituation: situation,
+            serviceType: service
+          })
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(errText || 'فشل الاتصال بنقطة ProcessRequest في الباك إند');
+        }
+
+        const data = await res.json();
+        // data contains: { status, requestId, responseText }
+        resultData = data;
+
+        // Fetch full rich record if available via Approval/{id}
+        if (data.requestId) {
+          try {
+            const detailRes = await fetch(`${currentApi}/Approval/${data.requestId}`);
+            if (detailRes.ok) {
+              const fullRecord = await detailRes.json();
+              resultData.eligibilityReason = fullRecord.eligibilityReason;
+              resultData.requiredDocumentsSummary = fullRecord.requiredDocumentsSummary;
+              resultData.draftedResponseText = fullRecord.draftedResponseText || data.responseText;
+            }
+          } catch (ignored) {}
+        }
+      }
+
+      // Stage 4: Officer Gate
+      setPipelineStep(3);
+      setStreamingProgress('👮 تم تحويل الطلب إلى بوابة الاعتماد البشري بانتظار تصديق الموظف...', 98);
+      await sleep(400);
+      completeAllPipeline();
+
+      streamBox.style.display = 'none';
+      lastSubmittedRequestId = resultData.requestId || '';
+      localStorage.setItem('lastSubmittedRequestId', lastSubmittedRequestId);
+
+      renderCitizenResult(resultData, name, service);
+      showAlert('citizen-success-alert', `✅ تم إرسال الطلب ومعالجته بنجاح! رقم الطلب المرجعي: ${resultData.requestId}`);
+      showToast('تم تسجيل الطلب وتوجيهه لاعتماد الموظف');
+      await loadStats();
+
+    } catch (err) {
+      streamBox.style.display = 'none';
+      resetPipelineSteps();
+      document.getElementById('resultStatusBadge').innerHTML = '<span class="stat-badge badge-red">❌ خطأ في المعالجة</span>';
+      showAlert('citizen-error-alert', `تعذر إكمال معالجة الطلب: ${err.message}. يمكنك تفعيل الوضع التجريبي للتجربة بدون سيرفر.`);
+    } finally {
+      btn.disabled = false;
+      document.getElementById('submitSpinner').style.display = 'none';
+      document.getElementById('submitIcon').style.display = 'inline';
+      document.getElementById('submitText').textContent = 'إرسال الطلب للمعالجة الذكية';
+    }
+  }
+
+  function setStreamingProgress(msg, pct) {
+    document.getElementById('processingStreamMsg').textContent = msg;
+    document.getElementById('processingProgressFill').style.width = pct + '%';
+  }
+
+  function renderCitizenResult(data, citizenName, serviceType) {
+    const statusMap = {
+      'awaiting_approval': { label: 'بانتظار اعتماد الموظف', cls: 'badge-orange', icon: '⏳' },
+      'AwaitingApproval':  { label: 'بانتظار اعتماد الموظف', cls: 'badge-orange', icon: '⏳' },
+      'approved':          { label: 'تمت الموافقة والاعتماد', cls: 'badge-green',  icon: '✅' },
+      'Approved':          { label: 'تمت الموافقة والاعتماد', cls: 'badge-green',  icon: '✅' },
+      'rejected':          { label: 'تم رفض الطلب', cls: 'badge-red', icon: '❌' },
+      'Rejected':          { label: 'تم رفض الطلب', cls: 'badge-red', icon: '❌' },
+      'escalated':         { label: 'تم التصعيد لمراجعة خاصة', cls: 'badge-purple', icon: '⚠️' }
+    };
+
+    const s = statusMap[data.status] || { label: data.status, cls: 'badge-blue', icon: '📌' };
+    document.getElementById('resultStatusBadge').innerHTML = `<span class="stat-badge ${s.cls}">${s.icon} ${s.label}</span>`;
+
+    const responseText = data.draftedResponseText || data.responseText || data.draftedResponse || 'جاري إعداد صيغة الخطاب...';
+    const eligibilityText = data.eligibilityReason || 'تم التحقق من تطابق الشروط بنجاح مع معايير الأهلية المعتمدة.';
+    const docsText = data.requiredDocumentsSummary || data.requiredDocuments || 'بطاقة الرقم القومي، ما يفيد الدخل، المستندات الثبوتية المؤيدة.';
+
+    let html = `
+      <div class="result-card-box accent-blue">
+        <div class="result-title">
+          <span>الرقم المرجعي للطلب (Track ID)</span>
+          <button class="btn btn-ghost btn-sm" onclick="copyText('${data.requestId}')">نسخ الرقم 📋</button>
+        </div>
+        <span class="id-chip">${data.requestId}</span>
+        <div style="margin-top:8px;font-size:12px;color:var(--text-secondary);">
+          احفظ هذا الرقم لمتابعة حالة الطلب وقرار الاعتماد من تبويب <strong>"تتبع طلب"</strong>.
+        </div>
+      </div>
+
+      <div class="result-card-box accent-green">
+        <div class="result-title">🎯 نتيجة وكيل فحص الأهلية (Eligibility Assessment)</div>
+        <div class="result-text">${escapeHtml(eligibilityText)}</div>
+      </div>
+
+      <div class="result-card-box accent-orange">
+        <div class="result-title">📋 المستندات المطلوبة (Procedure Requirements)</div>
+        <div class="result-text">${escapeHtml(docsText)}</div>
+      </div>
+
+      <div class="result-card-box accent-purple">
+        <div class="result-title">✍️ نص الخطاب المُصاغ للمواطن (Drafted Official Letter)</div>
+        <div class="result-text" style="font-size:14px;line-height:1.9;">${escapeHtml(responseText)}</div>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:8px;padding:12px 16px;background:rgba(255,145,0,0.08);border:1px solid rgba(255,145,0,0.25);border-radius:var(--radius-sm);">
+        <div style="font-size:13px;color:var(--orange);">
+          ⏳ تم قفل الرد ضمن بوابة الاعتماد البشري (Human Gate)؛ يمكنك مراجعته واعتماده الآن من بوابة الموظف.
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="switchView('officer')">الانتقال لبوابة الموظف للاعتماد ➔</button>
+      </div>
+    `;
+
+    document.getElementById('citizenResultDetails').innerHTML = html;
+  }
+
+  function resetCitizenForm() {
+    document.getElementById('citizenForm').reset();
+    document.getElementById('citizenResultCard').style.display = 'none';
+    resetPipelineSteps();
+    hideAlert('citizen-success-alert');
+    hideAlert('citizen-error-alert');
+  }
+
+  /* ---------------- REAL SSE STREAM TEST ---------------- */
+  async function handleStreamTest() {
+    const name = document.getElementById('formName').value.trim() || 'أحمد محمد علي';
+    const service = document.getElementById('formService').value || 'الدعم السكني';
+    const situation = document.getElementById('formSituation').value.trim() || 'المواطن دخله 6000 جنيه';
+
+    const resCard = document.getElementById('citizenResultCard');
+    resCard.style.display = 'block';
+    resCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    const streamBox = document.getElementById('processingStreamBox');
+    streamBox.style.display = 'block';
+    document.getElementById('citizenResultDetails').innerHTML = '';
+    document.getElementById('resultStatusBadge').innerHTML = '<span class="stat-badge badge-purple">⚡ بث مباشر (SSE Stream)</span>';
+
+    resetPipelineSteps();
+
+    if (isMockMode) {
+      setPipelineStep(0); setStreamingProgress('Eligibility check started...', 20);
+      await sleep(800);
+      setPipelineStep(1); setStreamingProgress('Eligibility: Eligible', 45);
+      await sleep(800);
+      setPipelineStep(2); setStreamingProgress('Resolving procedure & drafting response...', 75);
+      await sleep(800);
+      setPipelineStep(3); setStreamingProgress('Draft ready. Awaiting officer approval.', 100);
+      completeAllPipeline();
+      streamBox.style.display = 'none';
+      showToast('اكتمل اختبار البث الحي للمحاكاة');
+      return;
+    }
+
+    try {
+      const url = `${currentApi}/ProcessRequestStream/stream?citizenSituation=${encodeURIComponent(situation)}&serviceType=${encodeURIComponent(service)}`;
+      const eventSource = new EventSource(url);
+
+      eventSource.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          const msg = data.message || e.data;
+          setStreamingProgress(msg, 65);
+
+          if (msg.toLowerCase().includes('eligibility')) setPipelineStep(0);
+          if (msg.toLowerCase().includes('procedure')) setPipelineStep(1);
+          if (msg.toLowerCase().includes('drafting')) setPipelineStep(2);
+          if (msg.toLowerCase().includes('awaiting') || msg.toLowerCase().includes('ready')) {
+            setPipelineStep(3);
+            completeAllPipeline();
+            streamBox.style.display = 'none';
+            eventSource.close();
+            showToast('✅ اكتمل استلام أحداث الوكلاء بنجاح!');
+          }
+        } catch (err) {}
+      };
+
+      eventSource.onerror = () => {
+        eventSource.close();
+        streamBox.style.display = 'none';
+      };
+
+    } catch (err) {
+      streamBox.style.display = 'none';
+      showAlert('citizen-error-alert', 'تعذر فتح اتصال SSE المباشر: ' + err.message);
+    }
+  }
+
+  /* ---------------- REQUEST TRACKING ---------------- */
+  async function trackRequestById() {
+    const id = document.getElementById('trackInputId').value.trim();
+    const box = document.getElementById('trackResultBox');
+    box.style.display = 'block';
+
+    if (!id) {
+      box.innerHTML = `<div class="alert alert-warn visible">يرجى كتابة الرقم التعريفي للطلب للبحث عنه.</div>`;
+      return;
+    }
+
+    box.innerHTML = `<div class="empty-state"><span class="spinner" style="width:28px;height:28px;"></span><div class="empty-title" style="margin-top:12px;">جاري البحث عن الطلب في قاعدة البيانات...</div></div>`;
+
+    try {
+      let record = null;
+
+      if (isMockMode) {
+        await sleep(350);
+        record = mockRequests.find(r => r.id.toLowerCase() === id.toLowerCase());
+      } else {
+        const res = await fetch(`${currentApi}/Approval/${id}`);
+        if (res.ok) {
+          record = await res.json();
+        } else if (res.status === 404) {
+          // Check mock fallback
+          record = mockRequests.find(r => r.id.toLowerCase() === id.toLowerCase());
+        }
+      }
+
+      if (!record) {
+        box.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <div class="empty-title">لم يتم العثور على طلب بهذا الرقم</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">تأكد من صحة المعرف المدخل أو قدم طلباً جديداً من بوابة المواطن.</div>
+          </div>
+        `;
+        return;
+      }
+
+      const isApproved = record.status === 'Approved';
+      const isRejected = record.status === 'Rejected';
+      const isPending = record.status === 'AwaitingApproval';
+
+      box.innerHTML = `
+        <div class="result-section">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px;">
+            <div>
+              <h3 style="font-size:18px;font-weight:800;">${record.citizenName || 'مواطن'}</h3>
+              <div style="font-size:12.5px;color:var(--text-secondary);">${record.serviceType || 'خدمة حكومية'} · تاريخ التقديم: ${record.createdAt ? new Date(record.createdAt).toLocaleString('ar-EG') : 'حديثاً'}</div>
+            </div>
+            <div>
+              ${isApproved ? '<div class="official-stamp">✅ معتمد رسمياً من جهة الاختصاص</div>' : ''}
+              ${isRejected ? '<div class="stat-badge badge-red" style="font-size:13px;padding:6px 14px;">❌ تم رفض الطلب</div>' : ''}
+              ${isPending ? '<div class="stat-badge badge-orange" style="font-size:13px;padding:6px 14px;">⏳ قيد مراجعة واعتماد الموظف</div>' : ''}
+            </div>
+          </div>
+
+          <div class="result-card-box accent-blue">
+            <div class="result-title">معرف المعاملة</div>
+            <span class="id-chip">${record.id}</span>
+          </div>
+
+          <div class="result-card-box accent-green">
+            <div class="result-title">تقييم وكيل الأهلية</div>
+            <div class="result-text">${escapeHtml(record.eligibilityReason || 'تم التحقق من توافق الشروط.')}</div>
+          </div>
+
+          <div class="result-card-box accent-purple">
+            <div class="result-title">نص القرار أو الرد الحكومي المعتمد</div>
+            <div class="result-text" style="font-size:14.5px;line-height:1.9;">${escapeHtml(record.draftedResponseText || 'لا يوجد رد مصاغ بعد.')}</div>
+          </div>
+
+          ${isPending ? `
+            <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+              <button class="btn btn-primary btn-sm" onclick="switchView('officer'); openOfficerDetailModal('${record.id}');">
+                الانتقال لمراجعة واعتماد هذا الطلب الآن ➔
+              </button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+    } catch (err) {
+      box.innerHTML = `<div class="alert alert-error visible">حدث خطأ أثناء الاستعلام: ${err.message}</div>`;
+    }
+  }
+
+  function trackLastSubmitted() {
+    if (lastSubmittedRequestId) {
+      document.getElementById('trackInputId').value = lastSubmittedRequestId;
+      trackRequestById();
+    } else {
+      showToast('لم يتم تقديم طلبات في هذه الجلسة بعد.');
+    }
+  }
+
+  /* ---------------- OFFICER APPROVAL DASHBOARD ---------------- */
+  async function loadOfficerApprovals() {
+    const wrap = document.getElementById('officerTableWrap');
+    wrap.innerHTML = `<div class="empty-state"><span class="spinner" style="width:32px;height:32px;"></span><div class="empty-title" style="margin-top:14px;">جاري تحميل جدول الطلبات...</div></div>`;
+
+    try {
+      let data = [];
+      if (isMockMode) {
+        data = mockRequests;
+      } else {
+        const res = await fetch(`${currentApi}/Approval/pending`);
+        if (res.ok) {
+          data = await res.json();
+        } else {
+          data = mockRequests;
+        }
+      }
+
+      allOfficerRequests = data || [];
+      renderOfficerTable(filterRequests(allOfficerRequests));
+      await loadStats();
+
+    } catch (err) {
+      wrap.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">❌</div>
+          <div class="empty-title">تعذر الاتصال بقاعدة البيانات</div>
+          <div style="font-size:13px;color:var(--text-muted);">${err.message}</div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:14px;" onclick="activateMockMode()">تشغيل وضع العرض التوضيحي (Mock)</button>
+        </div>
+      `;
+    }
+  }
+
+  function filterOfficerList(status, btnEl) {
+    officerFilter = status;
+    document.querySelectorAll('[id^="btn-filter-"]').forEach(b => b.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+    renderOfficerTable(filterRequests(allOfficerRequests));
+  }
+
+  function handleOfficerSearch() {
+    renderOfficerTable(filterRequests(allOfficerRequests));
+  }
+
+  function filterRequests(list) {
+    const q = (document.getElementById('officerSearchInput').value || '').toLowerCase().trim();
+    let res = list;
+
+    if (officerFilter !== 'all') {
+      res = res.filter(r => r.status === officerFilter);
+    }
+    if (q) {
+      res = res.filter(r => 
+        (r.citizenName && r.citizenName.toLowerCase().includes(q)) ||
+        (r.serviceType && r.serviceType.toLowerCase().includes(q)) ||
+        (r.id && r.id.toLowerCase().includes(q))
+      );
+    }
+    return res;
+  }
+
+  function renderOfficerTable(requests) {
+    const wrap = document.getElementById('officerTableWrap');
+
+    if (!requests.length) {
+      wrap.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <div class="empty-title">لا توجد طلبات تطابق معايير الفلترة</div>
+          <div style="font-size:13px;color:var(--text-muted);">جرّب تغيير حالة الفلتر أو إضافة طلب جديد من بوابة المواطن.</div>
+        </div>
+      `;
+      return;
+    }
+
+    const badgeMap = {
+      'AwaitingApproval': '<span class="stat-badge badge-orange">⏳ في الانتظار</span>',
+      'Approved':         '<span class="stat-badge badge-green">✅ موافق عليه</span>',
+      'Rejected':         '<span class="stat-badge badge-red">❌ مرفوض</span>',
+      'Escalated':        '<span class="stat-badge badge-purple">⚠️ تم التصعيد</span>'
+    };
+
+    const rows = requests.map(r => {
+      const dateStr = r.createdAt ? new Date(r.createdAt).toLocaleString('ar-EG') : '—';
+      const isPending = r.status === 'AwaitingApproval';
+
+      return `
+        <tr>
+          <td>
+            <div class="td-name">${escapeHtml(r.citizenName || 'غير مسجل')}</div>
+            <div style="font-size:11px;color:var(--cyan);font-family:monospace;">${r.id.substring(0, 13)}...</div>
+          </td>
+          <td><strong>${escapeHtml(r.serviceType || '—')}</strong></td>
+          <td>${badgeMap[r.status] || r.status}</td>
+          <td style="font-size:12px;color:var(--text-muted);">${dateStr}</td>
+          <td>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn btn-ghost btn-sm" onclick="openOfficerDetailModal('${r.id}')">👁 مراجعة</button>
+              ${isPending ? `
+                <button class="btn btn-success btn-sm" onclick="executeApprove('${r.id}')">✅ اعتماد</button>
+                <button class="btn btn-danger btn-sm" onclick="executeReject('${r.id}')">❌ رفض</button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    wrap.innerHTML = `
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>اسم المواطن والمعرف</th>
+            <th>نوع الخدمة</th>
+            <th>الحالة</th>
+            <th>تاريخ المعاملة</th>
+            <th>إجراءات الموظف</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  /* ---------------- OFFICER ACTIONS ---------------- */
+  async function executeApprove(id) {
+    if (!confirm('هل أنت متأكد من اعتماد هذا الطلب وإرسال الرد الرسمي للمواطن؟')) return;
+
+    try {
+      if (isMockMode) {
+        const item = mockRequests.find(r => r.id === id);
+        if (item) item.status = 'Approved';
+      } else {
+        const res = await fetch(`${currentApi}/Approval/${id}/approve`, { method: 'POST' });
+        if (!res.ok) throw new Error(await res.text());
+      }
+
+      showToast('✅ تم اعتماد الطلب بنجاح وتحديث حالته');
+      closeOfficerModal();
+      await loadOfficerApprovals();
+    } catch (err) {
+      alert('خطأ في الاعتماد: ' + err.message);
+    }
+  }
+
+  async function executeReject(id) {
+    if (!confirm('هل أنت متأكد من رفض هذا الطلب؟')) return;
+
+    try {
+      if (isMockMode) {
+        const item = mockRequests.find(r => r.id === id);
+        if (item) item.status = 'Rejected';
+      } else {
+        const res = await fetch(`${currentApi}/Approval/${id}/reject`, { method: 'POST' });
+        if (!res.ok) throw new Error(await res.text());
+      }
+
+      showToast('❌ تم رفض الطلب وتحديث السجل');
+      closeOfficerModal();
+      await loadOfficerApprovals();
+    } catch (err) {
+      alert('خطأ في الرفض: ' + err.message);
+    }
+  }
+
+  function openOfficerDetailModal(id) {
+    const r = allOfficerRequests.find(x => x.id === id) || mockRequests.find(x => x.id === id);
+    if (!r) return;
+
+    const isPending = r.status === 'AwaitingApproval';
+
+    document.getElementById('modalTitle').innerHTML = `<span>⚖️ مراجعة طلب: ${escapeHtml(r.citizenName || '')}</span>`;
+    document.getElementById('modalBody').innerHTML = `
+      <div class="result-section">
+        <div class="result-card-box accent-blue">
+          <div class="result-title">بيانات المواطن والخدمة</div>
+          <div><strong>الاسم:</strong> ${escapeHtml(r.citizenName || '—')}</div>
+          <div style="margin-top:4px;"><strong>نوع الخدمة:</strong> ${escapeHtml(r.serviceType || '—')}</div>
+          <div style="margin-top:4px;"><strong>المعرف:</strong> <span class="id-chip">${r.id}</span></div>
+        </div>
+
+        <div class="result-card-box accent-green">
+          <div class="result-title">تقرير فحص وكيل الأهلية</div>
+          <div class="result-text">${escapeHtml(r.eligibilityReason || 'استوفى شروط الأهلية')}</div>
+        </div>
+
+        <div class="result-card-box accent-orange">
+          <div class="result-title">قائمة المستندات المحددة</div>
+          <div class="result-text">${escapeHtml(r.requiredDocumentsSummary || 'المستندات الرسمية المعتمدة')}</div>
+        </div>
+
+        <div class="result-card-box accent-purple">
+          <div class="result-title">نص الخطاب المُعد للاعتماد</div>
+          <div class="result-text" style="font-size:14px;line-height:1.8;">${escapeHtml(r.draftedResponseText || '—')}</div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('modalFooter').innerHTML = `
+      ${isPending ? `
+        <button class="btn btn-success" onclick="executeApprove('${r.id}')">✅ اعتماد وتصديق القرار</button>
+        <button class="btn btn-danger" onclick="executeReject('${r.id}')">❌ رفض الطلب</button>
+      ` : `<div style="margin-right:auto;font-size:13px;color:var(--text-muted);">حالة الطلب الحالية: <strong>${r.status}</strong></div>`}
+      <button class="btn btn-ghost" onclick="closeOfficerModal()">إغلاق</button>
+    `;
+
+    document.getElementById('officerModal').classList.add('open');
+  }
+
+  function closeOfficerModal() {
+    document.getElementById('officerModal').classList.remove('open');
+  }
+
+  function closeModalOnOverlay(e) {
+    if (e.target === document.getElementById('officerModal')) {
+      closeOfficerModal();
+    }
+  }
+
+  /* ---------------- INGESTION (RAG) ---------------- */
+  async function handleIngestDocument() {
+    const fn = document.getElementById('docFileName').value.trim();
+    const rt = document.getElementById('docRawText').value.trim();
+    hideAlert('ingestSuccessAlert');
+    hideAlert('ingestErrorAlert');
+    const resultBox = document.getElementById('ingestResultBox');
+    resultBox.style.display = 'none';
+
+    if (!fn || !rt) {
+      showAlert('ingestErrorAlert', 'يرجى إدخال اسم الملف والمحتوى النصي للائحة.');
+      return;
+    }
+
+    const sp = document.getElementById('ingestSpinner');
+    const btn = document.getElementById('ingestBtn');
+    btn.disabled = true;
+    sp.style.display = 'inline-block';
+
+    try {
+      let docId = '';
+
+      if (isMockMode) {
+        await sleep(650);
+        docId = 'doc-guid-' + Math.random().toString(36).substring(2, 9);
+      } else {
+        const res = await fetch(`${currentApi}/Ingest`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileName: fn, rawText: rt })
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        docId = data.documentId || JSON.stringify(data);
+      }
+
+      showAlert('ingestSuccessAlert', '✅ تم رفع اللائحة وفهرستها وتضمين المتجهات بنجاح في قاعدة البيانات!');
+      resultBox.style.display = 'block';
+      resultBox.innerHTML = `
+        <div class="result-card-box accent-green">
+          <div class="result-title">معرف الوثيقة المسجلة (Document ID)</div>
+          <span class="id-chip">${docId}</span>
+          <div style="margin-top:8px;font-size:12.5px;color:var(--text-secondary);">
+            أصبحت هذه الوثيقة متاحة الآن لمحرك البحث الذكي (Ask) ولوكلاء فحص الأهلية.
+          </div>
+        </div>
+      `;
+      showToast('تمت الفهرسة بنجاح');
+
+    } catch (err) {
+      showAlert('ingestErrorAlert', `فشل رفع الوثيقة: ${err.message}`);
+    } finally {
+      btn.disabled = false;
+      sp.style.display = 'none';
+    }
+  }
+
+  /* ---------------- ASK (GROUNDED QA) ---------------- */
+  async function handleAskQuestion() {
+    const q = document.getElementById('askInput').value.trim();
+    hideAlert('askErrorAlert');
+    const resultBox = document.getElementById('askResultBox');
+    resultBox.style.display = 'none';
+
+    if (!q) {
+      showAlert('askErrorAlert', 'يرجى كتابة سؤال للاستعلام عنه.');
+      return;
+    }
+
+    const sp = document.getElementById('askSpinner');
+    const btn = document.getElementById('askBtn');
+    btn.disabled = true;
+    sp.style.display = 'inline-block';
+
+    try {
+      let answerText = '';
+
+      if (isMockMode) {
+        await sleep(700);
+        if (q.includes('دخل')) {
+          answerText = 'وفقاً للائحة الإسكان والدعم السكني المفهرسة، الحد الأقصى للدخل الشهري المسموح به للأسرة هو 8000 جنيه مصري.';
+        } else {
+          answerText = `بناءً على المستندات واللوائح المتوفرة: يشترط استيفاء معايير الاستحقاق وتقديم بطاقة الرقم القومي وإثبات الدخل المعتمد.`;
+        }
+      } else {
+        const res = await fetch(`${currentApi}/Ask`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(q)
+        });
+
+        if (!res.ok) throw new Error(await res.text());
+
+        // The controller returns Ok(answer) where answer is a string
+        const data = await res.json();
+        answerText = typeof data === 'string' ? data : (data.answer || JSON.stringify(data, null, 2));
+      }
+
+      resultBox.style.display = 'block';
+      resultBox.innerHTML = `
+        <div class="result-card-box accent-purple">
+          <div class="result-title">
+            <span>إجابة الذكاء الاصطناعي المستندة للوثائق (Grounded Answer)</span>
+            <span class="stat-badge badge-green">مدعوم بالدليل</span>
+          </div>
+          <div class="result-text" style="font-size:14.5px;line-height:1.9;">${escapeHtml(answerText)}</div>
+        </div>
+      `;
+
+    } catch (err) {
+      showAlert('askErrorAlert', `تعذر الاستعلام: ${err.message}`);
+    } finally {
+      btn.disabled = false;
+      sp.style.display = 'none';
+    }
+  }
+
+  /* ---------------- HELPERS ---------------- */
+  function showAlert(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = `<span>🔔</span><span>${msg}</span>`;
+    el.classList.add('visible');
+  }
+
+  function hideAlert(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('visible');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toastBox');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      showToast('تم نسخ المعرف إلى الحافظة 📋');
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain Copilot - مساعد الخدمات الحكومية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1E88E5;
+            --primary-dark: #1565C0;
+            --primary-light: #E3F2FD;
+            --success: #43A047;
+            --warning: #FB8C00;
+            --danger: #E53935;
+            --gray-50: #FAFAFA;
+            --gray-100: #F5F5F5;
+            --gray-200: #EEEEEE;
+            --gray-300: #E0E0E0;
+            --gray-500: #9E9E9E;
+            --gray-700: #424242;
+            --gray-900: #212121;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --border-radius: 8px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        html, body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-primary);
+            background-color: var(--gray-50);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-logo-icon {
+            font-size: 28px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            font-size: 13px;
+        }
+
+            .header-status.connected {
+                background: rgba(67, 160, 71, 0.3);
+            }
+
+            .header-status.error {
+                background: rgba(229, 57, 53, 0.3);
+            }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Two Column Layout */
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 968px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card Component */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            padding: 24px;
+            transition: box-shadow 0.3s ease;
+        }
+
+            .card:hover {
+                box-shadow: var(--shadow-md);
+            }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title-icon {
+            font-size: 20px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+            .form-group:last-child {
+                margin-bottom: 0;
+            }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            input:focus, textarea:focus, select:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px var(--primary-light);
+            }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        /* Button Styles */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .button-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+            .button-primary:hover {
+                background: var(--primary-dark);
+                box-shadow: var(--shadow-md);
+            }
+
+            .button-primary:active {
+                transform: translateY(2px);
+            }
+
+            .button-primary:disabled {
+                background: var(--gray-300);
+                cursor: not-allowed;
+                box-shadow: none;
+            }
+
+        .button-secondary {
+            background: var(--gray-100);
+            color: var(--text-primary);
+            border: 1px solid var(--gray-300);
+        }
+
+            .button-secondary:hover {
+                background: var(--gray-200);
+            }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+            .button-group .button {
+                flex: 1;
+            }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .status-eligible {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-not-eligible {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .status-escalated {
+            background: #F3E5F5;
+            color: #6A1B9A;
+        }
+
+        .status-approved {
+            background: #E8F5E9;
+            color: #1B5E20;
+        }
+
+        /* Result Section */
+        .result-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .result-item {
+            margin-bottom: 16px;
+        }
+
+        .result-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .result-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+            .result-value strong {
+                color: var(--primary);
+            }
+
+        /* Progress Indicator */
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 16px 0;
+            padding: 12px;
+            background: var(--primary-light);
+            border-radius: var(--border-radius);
+            color: var(--primary-dark);
+            font-size: 13px;
+        }
+
+        .progress-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Response Box */
+        .response-box {
+            background: var(--gray-50);
+            border-right: 4px solid var(--primary);
+            padding: 16px;
+            border-radius: var(--border-radius);
+            margin-top: 16px;
+            line-height: 1.8;
+            font-size: 14px;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .response-box-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+            border-radius: var(--border-radius);
+            padding: 12px;
+            font-size: 13px;
+            color: var(--primary-dark);
+            margin-bottom: 16px;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .info-box-icon {
+            flex-shrink: 0;
+            font-size: 16px;
+        }
+
+        .info-box.error {
+            background: #FFEBEE;
+            border-color: #E53935;
+            color: #C62828;
+        }
+
+        .info-box.success {
+            background: #E8F5E9;
+            border-color: #43A047;
+            color: #2E7D32;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: var(--gray-200);
+            margin: 20px 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gray-900);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 13px;
+        }
+
+        /* Loading State */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #FFEBEE;
+            color: #C62828;
+            border: 1px solid #EF9A9A;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+            font-size: 13px;
+            display: none;
+        }
+
+            .error-message.show {
+                display: block;
+            }
+
+        /* Success Message */
+        .success-message {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border: 1px solid #A5D6A7;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+            font-size: 13px;
+            display: none;
+        }
+
+            .success-message.show {
+                display: block;
+            }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .empty-state-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Connection Status */
+        .connection-info {
+            background: #F3E5F5;
+            border: 1px solid #CE93D8;
+            color: #4A148C;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+            font-size: 12px;
+        }
+
+            .connection-info.connected {
+                background: #E8F5E9;
+                border-color: #43A047;
+                color: #2E7D32;
+            }
+
+            .connection-info.error {
+                background: #FFEBEE;
+                border-color: #E53935;
+                color: #C62828;
+            }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .header-logo {
+                font-size: 20px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <div class="header-logo">
+                    <span class="header-logo-icon">🤖</span>
+                    <div>
+                        <div>Domain Copilot</div>
+                        <div class="header-subtitle">مساعد الخدمات الحكومية</div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-status" id="headerStatus">
+                <span>●</span>
+                <span id="headerStatusText">جاري الفحص...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Connection Status -->
+        <div id="connectionInfo" class="connection-info">
+            جاري التحقق من الاتصال بالخادم على https://localhost:7023...
+        </div>
+
+        <div class="layout">
+            <!-- Left Column: Input Form -->
+            <div class="card">
+                <div class="card-title">
+                    <span class="card-title-icon">📝</span>
+                    قدم طلبك
+                </div>
+
+                <div id="errorMessage" class="error-message"></div>
+                <div id="successMessage" class="success-message"></div>
+
+                <form id="requestForm">
+                    <div class="form-group">
+                        <label for="citizenName">اسم المواطن *</label>
+                        <input type="text"
+                               id="citizenName"
+                               placeholder="أدخل اسمك الكامل"
+                               required
+                               maxlength="100" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceType">نوع الخدمة *</label>
+                        <select id="serviceType" required>
+                            <option value="">-- اختر خدمة --</option>
+                            <option value="housing_assistance">مساعدة سكنية</option>
+                            <option value="social_care">الرعاية الاجتماعية</option>
+                            <option value="health_insurance">التأمين الصحي</option>
+                            <option value="education_grant">منحة تعليمية</option>
+                            <option value="passport_renewal">تجديد جواز السفر</option>
+                            <option value="id_card">بطاقة الهوية</option>
+                            <option value="other">أخرى</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="citizenSituation">وصف حالتك *</label>
+                        <textarea id="citizenSituation"
+                                  placeholder="صف وضعك بالتفصيل ليساعدنا في فهم احتياجاتك بشكل أفضل..."
+                                  required
+                                  maxlength="1000"></textarea>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-box-icon">ℹ️</span>
+                        <span>سيتم مراجعة طلبك من قبل فريق متخصص</span>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="button button-primary" id="submitBtn">
+                            <span>📤</span>
+                            <span>قدم الطلب</span>
+                        </button>
+                        <button type="reset" class="button button-secondary">
+                            <span>🔄</span>
+                            <span>مسح</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right Column: Results -->
+            <div class="card" id="resultsCard" style="display: none;">
+                <div class="card-title">
+                    <span class="card-title-icon">📊</span>
+                    النتائج
+                </div>
+
+                <div id="progressIndicator" class="progress-indicator" style="display: none;">
+                    <span class="progress-spinner"></span>
+                    <span id="progressText">جاري معالجة طلبك...</span>
+                </div>
+
+                <div id="resultsContent"></div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="card" id="emptyState">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <div class="empty-state-title">لا توجد نتائج بعد</div>
+                    <div class="empty-state-description">
+                        قدم طلبك من الجانب الأيسر لعرض النتائج هنا
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Domain Copilot - جميع الحقوق محفوظة</p>
+    </footer>
+
+    <script>
+        // Configuration - UPDATED PORT TO 7023
+        const API_BASE_URL = 'https://localhost:7023/api';
+        const CONNECTION_CHECK_TIMEOUT = 5000;
+
+        // DOM Elements
+        const requestForm = document.getElementById('requestForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultsCard = document.getElementById('resultsCard');
+        const emptyState = document.getElementById('emptyState');
+        const resultsContent = document.getElementById('resultsContent');
+        const progressIndicator = document.getElementById('progressIndicator');
+        const progressText = document.getElementById('progressText');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const headerStatus = document.getElementById('headerStatus');
+        const headerStatusText = document.getElementById('headerStatusText');
+        const connectionInfo = document.getElementById('connectionInfo');
+
+        // State
+        let isConnected = false;
+
+        // Check API Connection
+        async function checkConnection() {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), CONNECTION_CHECK_TIMEOUT);
+
+                // Try to access the swagger endpoint to verify connection
+                const response = await fetch(`${API_BASE_URL}/ProcessRequest`, {
+                    method: 'GET',
+                    signal: controller.signal,
+                    headers: { 'Content-Type': 'application/json' }
+                }).catch(async () => {
+                    // If GET fails, try POST with empty data to check endpoint exists
+                    return fetch(`${API_BASE_URL}/ProcessRequest`, {
+                        method: 'POST',
+                        signal: controller.signal,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            citizenName: 'test',
+                            serviceType: 'test',
+                            citizenSituation: 'test'
+                        })
+                    });
+                });
+
+                clearTimeout(timeoutId);
+                // If we get here, connection worked
+                isConnected = true;
+                updateConnectionStatus(true);
+                return true;
+            } catch (error) {
+                console.warn('Connection check failed:', error.message);
+                isConnected = false;
+                updateConnectionStatus(false);
+                return false;
+            }
+        }
+
+        // Update Connection Status
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('headerStatus');
+            const infoElement = document.getElementById('connectionInfo');
+
+            if (connected) {
+                statusElement.classList.remove('error');
+                statusElement.classList.add('connected');
+                headerStatusText.textContent = '✅ متصل';
+
+                infoElement.classList.remove('error');
+                infoElement.classList.add('connected');
+                infoElement.innerHTML = '✅ الخادم يعمل بشكل صحيح على https://localhost:7023 - يمكنك قدم طلبك';
+
+                submitBtn.disabled = false;
+            } else {
+                statusElement.classList.remove('connected');
+                statusElement.classList.add('error');
+                headerStatusText.textContent = '❌ غير متصل';
+
+                infoElement.classList.remove('connected');
+                infoElement.classList.add('error');
+                infoElement.innerHTML = `
+                        ❌ <strong>الخادم غير متاح على https://localhost:7023</strong><br>
+                        تأكد من:
+                        <ul style="margin-top: 8px; margin-right: 20px; font-size: 12px; line-height: 1.6;">
+                            <li>✓ تشغيل الخادم (.NET) - اضغط F5 في Visual Studio</li>
+                            <li>✓ الخادم يعمل على المنفذ 7023 (HTTPS)</li>
+                            <li>✓ CORS مفعل في Program.cs</li>
+                            <li>✓ عدم وجود جدار ناري يحجب الاتصال</li>
+                            <li>✓ فتح https://localhost:7023/swagger في المتصفح أولاً للتحقق</li>
+                        </ul>
+                    `;
+
+                submitBtn.disabled = true;
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => errorMessage.classList.remove('show'), 6000);
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.classList.add('show');
+            setTimeout(() => successMessage.classList.remove('show'), 5000);
+        }
+
+        // Show progress
+        function showProgress(message) {
+            progressText.textContent = message;
+            progressIndicator.style.display = 'flex';
+        }
+
+        // Hide progress
+        function hideProgress() {
+            progressIndicator.style.display = 'none';
+        }
+
+        // Display results
+        function displayResults(data) {
+            hideProgress();
+            resultsCard.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            let html = '';
+
+            // Status Badge
+            const statusMap = {
+                'awaiting_approval': { label: 'في انتظار الموافقة', class: 'status-pending' },
+                'eligible': { label: 'مؤهل', class: 'status-eligible' },
+                'not_eligible': { label: 'غير مؤهل', class: 'status-not-eligible' },
+                'escalated': { label: 'تم التصعيد', class: 'status-escalated' },
+                'approved': { label: 'موافق', class: 'status-approved' }
+            };
+
+            const status = statusMap[data.status] || { label: data.status, class: 'status-pending' };
+            html += `
+                    <div class="result-item">
+                        <div class="result-label">حالة الطلب</div>
+                        <span class="status-badge ${status.class}">${status.label}</span>
+                    </div>
+                `;
+
+            // Request ID
+            if (data.requestId) {
+                html += `
+                        <div class="result-item">
+                            <div class="result-label">رقم الطلب</div>
+                            <div class="result-value"><strong>${data.requestId}</strong></div>
+                        </div>
+                    `;
+            }
+
+            // Eligibility
+            if (data.eligibility) {
+                html += `
+                        <div class="result-item">
+                            <div class="result-label">الأهلية</div>
+                            <div class="result-value">${data.eligibility === 'eligible' ? '✅ مؤهل' : '❌ غير مؤهل'}</div>
+                        </div>
+                    `;
+            }
+
+            // Documents
+            if (data.requiredDocuments) {
+                html += `
+                        <div class="result-item">
+                            <div class="result-label">المستندات المطلوبة</div>
+                            <div class="result-value">${data.requiredDocuments}</div>
+                        </div>
+                    `;
+            }
+
+            // Response
+            if (data.draftedResponse || data.responseText) {
+                const responseText = (data.draftedResponse || data.responseText || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                html += `
+                        <div class="result-section">
+                            <div class="response-box">
+                                <div class="response-box-title">الرد الرسمي</div>
+                                ${responseText}
+                            </div>
+                        </div>
+                    `;
+            }
+
+            resultsContent.innerHTML = html || '<div class="empty-state"><p>لم يتمكن النظام من معالجة الطلب</p></div>';
+        }
+
+        // Submit form
+        requestForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!isConnected) {
+                showError('الخادم غير متاح حالياً');
+                return;
+            }
+
+            const citizenName = document.getElementById('citizenName').value.trim();
+            const serviceType = document.getElementById('serviceType').value.trim();
+            const citizenSituation = document.getElementById('citizenSituation').value.trim();
+
+            if (!citizenName || !serviceType || !citizenSituation) {
+                showError('الرجاء ملء جميع الحقول المطلوبة');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            headerStatusText.textContent = 'جاري المعالجة...';
+            showProgress('جاري معالجة طلبك...');
+            resultsCard.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/ProcessRequest`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        citizenName,
+                        serviceType,
+                        citizenSituation
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`الخادم أرجع خطأ: ${response.status} - ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                displayResults(data);
+                showSuccess('تم معالجة طلبك بنجاح ✅');
+                headerStatusText.textContent = '✅ متصل';
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError(`خطأ: ${error.message}`);
+                hideProgress();
+                resultsCard.style.display = 'none';
+                emptyState.style.display = 'block';
+                headerStatusText.textContent = 'خطأ في الاتصال';
+
+            } finally {
+                submitBtn.disabled = !isConnected;
+            }
+        });
+
+        // Initialize: Check connection on page load
+        window.addEventListener('load', () => {
+            console.log('Page loaded, checking connection to:', API_BASE_URL);
+            checkConnection();
+        });
+
+        // Check connection every 30 seconds
+        setInterval(checkConnection, 30000);
+    </script>
+</body>
+</html>

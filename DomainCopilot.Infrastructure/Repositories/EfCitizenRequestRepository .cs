@@ -37,7 +37,7 @@ namespace DomainCopilot.Infrastructure.Repositories
         public async Task<List<CitizenRequest>> GetPendingApprovalAsync(Guid tenantId, CancellationToken cancellationToken = default)
         {
             return await _context.CitizenRequests
-                .Where(r => r.Status == RequestStatus.AwaitingApproval)
+                .Where(r => r.TenantId == tenantId)
                 .ToListAsync(cancellationToken);
         }
     }
